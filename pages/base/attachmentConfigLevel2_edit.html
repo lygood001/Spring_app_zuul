@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>attchment config level 2 edit page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form" id="data_form" lay-filter="fromUpdate"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <input id="id" name="id" type="hidden" v-model:value="group_data.id">
+    <input id="nCreator" name="nCreator" type="hidden" v-model:value="group_data.ncreator">
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>文件分类</span></label>
+        <div class="layui-input-block">
+            <input type="text" readonly="readonly" name="vFileType" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input"  
+            	v-model:value="group_data.vclassType">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件类型</label>
+        <div class="layui-input-block">
+            <input type="text" readonly="readonly" name="vClassType" placeholder="请输入" 
+            	autocomplete="off" class="layui-input"  v-model:value="group_data.vfileType">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>文件类型名称</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vFileTypeName" lay-verify="required" placeholder="请输入" 
+            	autocomplete="off" class="layui-input"  v-model:value="group_data.vfileTypeName">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>文件磁盘路径</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vClassFilePath" lay-verify="required" placeholder="请输入"
+            	 autocomplete="off"  class="layui-input"  v-model:value="group_data.vclassFilePath">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件尺寸/大小(KB)</label>
+        <div class="layui-input-block">
+            <input type="number" name="vFileSize" placeholder="请输入" 
+            	 autocomplete="off" class="layui-input"  v-model:value="group_data.vfileSize">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">分辨率-长，单位px</label>
+        <div class="layui-input-block">
+            <input type="number" name="nPxLength" placeholder="请输入" autocomplete="off" 
+            	class="layui-input"  v-model:value="group_data.npxLength">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">分辨率-宽，单位px</label>
+        <div class="layui-input-block">
+            <input type="number" name="nPxWidth" placeholder="请输入" autocomplete="off" 
+            	class="layui-input"  v-model:value="group_data.npxWidth">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>数据上限</span></label>
+        <div class="layui-input-block">
+            <input type="number" name="nLimit" placeholder="请输入" autocomplete="off" 
+            	lay-verify="required|number" class="layui-input"  v-model:value="group_data.nlimit">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建时间</label>
+        <div class="layui-input-block">
+            <input type="text" readonly="readonly" name="dCreate" lay-verify="required" 
+            	placeholder="请输入" autocomplete="off" class="layui-input"  v-model:value="group_data.dcreate">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建者</label>
+        <div class="layui-input-block">
+            <input type="text" readonly="readonly" name="vCreatorName" lay-verify="required" placeholder="请输入" 
+            	autocomplete="off" class="layui-input"  v-model:value="group_data.vcreatorName">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <input type="text" name="vRemark" placeholder="请输入" autocomplete="off" class="layui-input" 
+            	 v-model:value="group_data.vremark">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="fromAdd" type="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+	var form = layui.form;
+	form.val("formUpdate",{});
+      
+    var vm = new Vue({
+     	el:"#data_form",
+     	data:
+     	{
+			group_data: {},
+     	}
+     }); 
+                 
+    $(function () {
+    	initPageData();
+    });
+    
+    /**
+	 * 初始化页面数据
+	 */
+    function initPageData()
+    {
+    	var url="/SPRING-CLOUD-BASE/attachmentConfigLevel2/getAttachmentConfigID"; 
+        callAjax(url,{id:getURLParameter("id")||0},function (jsonData,status) {
+            if (jsonData.code =="S" && status == dms_boot_config.CALL_URL_OK) {
+            	 
+                 vm.group_data = jsonData.data;  
+        
+        		 initPageEvent();
+             
+            }else{
+                dmsalert(jsonData.msg, "E");
+            }
+        });
+    }
+    
+   /**
+     * 初始化页面事件
+     */
+    function initPageEvent()
+    {
+       
+        form.on('submit(fromAdd)', function (data) {
+            //var myDate = new Date();
+            //data.field.dUpdate=myDate.getFullYear()+"-"+parseInt(myDate.getMonth())+1+"-"+myDate.getDate()+" "+myDate.getHours()+":"+myDate.getMinutes()+":"+myDate.getSeconds();
+            if(isNullOrEmpty(data.field.vFileSize)){
+                data.field.vFileSize=0;
+            }
+            if(isNullOrEmpty(data.field.nPxWidth)){
+                data.field.nPxWidth=0;
+            }
+            if(isNullOrEmpty(data.field.nPxLength)){
+                data.field.nPxLength=0;
+            }
+            callAjax("/SPRING-CLOUD-BASE/attachmentConfigLevel2/update",data.field,function (jsonData,Status) {
+                    if(jsonData.code=='S')
+                    {
+                        dmsalert("修改文件上传配置信息成功!","W");
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index);
+
+                        window.parent.location.reload();//修改成功后刷新父界面
+
+                    }else{
+                        dmsalert(jsonData.message,"W");
+                    }
+                });
+
+            return false;
+        });
+    }
+</script>
+</body>
+</html>

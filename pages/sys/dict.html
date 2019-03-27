@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dictionary page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+
+<script id="toolbarDemo" type="text/html">
+    <button class="layui-btn layui-btn-sm" onclick="addDictItem()">新增字典</button>
+    <button class="layui-btn layui-btn-sm" onclick="deleteDict()">删除</button>
+    搜索字典：
+    <div class="layui-inline">
+        <input class="layui-input" name="id" id="selectDict" autocomplete="off">
+    </div>
+    <button class="layui-btn layui-btn-sm" onclick="selectDict()">搜索</button>
+</script>
+
+<table class="layui-hide" id="dictList" lay-filter="dictList"></table>
+
+<script id="barDemo" type="text/html">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+</script>
+
+<script type="text/html" id="switchStop">
+    <!-- 这里的 checked 的状态只是演示 -->
+    <input type="checkbox" name="stopFlag" value="{{d.id}}" disabled="disabled" lay-skin="switch" lay-text="未停用|已停用"
+           lay-filter="stop" {{d.vStopFlag== 0 ? 'checked' : '' }}>
+</script>
+
+<script th:inline="none">
+    var columns_show_json;
+    var table = layui.table,
+        form = layui.form;
+
+    columns_show_json = [[
+        {type: 'checkbox'}
+        , {field: 'id', width: 100, title: 'id', sort: true, hide: true}
+        , {field: 'vMainCode', width: 200, title: '字典主代码', sort: true}
+        , {field: 'vMainName', width: 200, title: '字典主名称', sort: true}
+        , {field: 'vCode', width: 200, title: '字典子代码', sort: true}
+        , {field: 'vDesc', width: 200, title: '字典子名称', sort: true}
+        , {field: 'nSort', width: 100, title: '排序键', sort: true}
+        , {field: 'vStopFlag', width: 150, title: '停用标识', templet: '#switchStop', unresize: true}
+        , {field: 'dStop', width: 200, title: '停用时间'}
+        , {field: 'vCreatorName', width: 200, title: '创建者'}
+        , {field: 'dCreate', width: 200, title: '创建时间'}
+        , {field: 'dUpdate', width: 200, title: '修改时间'}
+        , {field: 'vRemark', width: 100, title: '备注'}
+        , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+
+    ]];
+
+    $(function () {
+        initPageData();
+        initPageEvent();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData() {
+        var para_json_obj = {
+            layer_table_define_obj: table,
+            layer_table_column_obj: columns_show_json,
+            ajax_url: "/SPRING-CLOUD-SYS/dict/getDictList",
+            ajax_json_data: {},
+            dom_table_id: "dictList",
+            dom_bar_id: "toolbarDemo",
+            callback: function (res, curr, count) {
+            }
+        };
+
+        initPageTableData(para_json_obj);
+    }
+
+    /**
+     * 初始化页面事件
+     */
+    function initPageEvent() {
+        //监听表格复选框选择
+        table.on('checkbox(dictList)', function (obj) {
+        });
+
+        //删除 修改
+        table.on('tool(dictList)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('您确定要删除该条数据字典？', function (index) {
+                    var ajax_url = '/SPRING-CLOUD-SYS/dict/removeDictItem';
+                    var jsonDataObj = {id: data.id};
+                    callAjax(ajax_url, jsonDataObj, function deleteDictCB(jsonData, status) {
+                        if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                            obj.del();
+                            dmsalert('删除数据字典成功!', "S", function () {
+                                window.parent.location.reload();//修改成功后刷新父界面
+                            });
+                        } else {
+                            dmsalert(jsonData.msg, "E");
+                        }
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                WindowsShow('修改图片配置','dict_edit.html?id=' + data.id);
+                   
+				MaxOpenWindows();
+            }
+        });
+    }
+
+    function addDictItem() {
+    	WindowsShow('新增数据字典','dict_add.html');
+                   
+		MaxOpenWindows();
+    }
+
+    function selectDict() {
+        table = layui.table
+        var dictValue = $("#selectDict").val();
+        if (isNullOrEmpty(dictValue)) {
+            window.parent.location.reload();//修改成功后刷新父界面
+        } else {
+            var para_json_obj = {
+                layer_table_define_obj: table,
+                layer_table_column_obj: columns_show_json,
+                ajax_url: "/SPRING-CLOUD-SYS/dict/getDictItemsByCode",
+                ajax_json_data: {vDictCode: dictValue},
+                dom_table_id: "dictList",
+                dom_bar_id: "toolbarDemo",
+                callback: function (res, curr, count) {
+                }
+            };
+            initPageTableData(para_json_obj);
+        }
+    }
+
+    function deleteDict() {
+        table = layui.table
+        //获取选中数据
+        var checkStatus = table.checkStatus('dictList')
+            , data = checkStatus.data;
+        var urlStr = "/SPRING-CLOUD-SYS/dict/deleteCheckedItem";
+        var jsonData = {
+            checkedItem: data
+        };
+        if (data.length > 0) {
+            layer.confirm('您确定要删除选中的数据字典？', function (index) {
+                callAjax(urlStr, jsonData, function (data, status) {
+                    if (data.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                        dmsalert('删除数据字典成功!', "S", function () {
+                            window.parent.location.reload();//修改成功后刷新父界面
+                        });
+                    } else {
+                        dmsalert(data.msg, "E"); //alert warning
+                    }
+                });
+            });
+        } else {
+            dmstoast('请先选择要删除的数据!', "W");
+        }
+        return false;
+    }
+</script>
+</body>
+</html>

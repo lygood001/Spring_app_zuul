@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>error log page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<style>
+    .layui-inline .layui-input {
+        display: inline-block;
+        width: auto;
+    }
+</style>
+<body>
+<script type="text/html" id="toolbarDemo">
+
+    <div class="layui-inline">
+        请选择开始时间：
+        <input id="go_dCreate" type="text" name="go_dCreate" placeholder="请选择开始时间" autocomplete="off"
+               class="layui-input" lay-verify="required">
+
+        请选择结束时间：
+        <input id="over_dCreate" type="text" name="over_dCreate" placeholder="请选择结束时间" autocomplete="off"
+               class="layui-input" lay-verify="required">
+        <button class="layui-btn layui-btn-sm" onclick="getErrorList()">搜索</button>
+    </div>
+</script>
+
+
+<table class="layui-hide" id="errorLogDOList" lay-filter="errorLogDOList"></table>
+<textarea id="textAreaCopy" style="opacity: 0;height: 0px;width: 0px;"></textarea>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="copy1">复制URL</a>
+    <a class="layui-btn layui-btn-xs" lay-event="copy2">复制入参</a>
+    <a class="layui-btn layui-btn-xs" lay-event="copy3">复制Exception</a>
+</script>
+<script th:inline="none">
+    var table = layui.table;
+    var end;
+    var begin;
+    var table_column_data = [[
+        {field: 'id', width: 100, title: 'id', sort: true, hide: true}
+        , {field: 'vModel', width: 100, title: '模块'}
+        , {field: 'vServerName', width: 200, title: '异常服务器地址'}
+        , {field: 'vServerIp', width: 200, title: '异常微服务名称'}
+        , {field: 'vRequestUrl', width: 200, title: 'Http请求URL'}
+        , {field: 'vParameters', width: 200, title: 'Http请求参数'}
+        , {field: 'vException', width: 240, title: '系统Exception'}
+        , {field: 'dCreate', width: 180, title: '创建时间', sort: true}
+        , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 260}
+    ]];
+    table.on('tool(errorLogDOList)', function (obj) {
+        var data = obj.data;
+        if (obj.event === 'copy1') {
+            copyFun(data.vRequestUrl);
+        } else if (obj.event === 'copy2') {
+            copyFun(data.vParameters);
+        } else if (obj.event === 'copy3') {
+            copyFun(data.vException);
+        }
+    });
+
+    function copyFun(copyData) {
+        var textAreaCopy = document.getElementById('textAreaCopy');
+        if (isNullOrEmpty(copyData)) {
+            copyData = ' '
+        }
+        textAreaCopy.value = copyData;
+        textAreaCopy.select();
+        document.execCommand('copy');
+    }
+
+    $(function () {
+        getErrorList();
+    });
+
+    /**
+     * 初始化页面
+     */
+    function initPageData() {
+        var laydate = layui.laydate;
+
+        //日期选择
+        laydate.render({
+            elem: '#go_dCreate'
+            , type: 'datetime'
+            ,value:begin
+        });
+        laydate.render({
+            elem: '#over_dCreate'
+            , type: 'datetime'
+            , value: end
+
+        });
+    }
+
+    /**
+     * 获取error list
+     */
+    function getErrorList() {
+        var go_dCreate = document.getElementById("go_dCreate");
+        var over_dCreate = document.getElementById("over_dCreate");
+        var date = new Date();
+        begin=date.toLocaleDateString().replace(/\//g,'-')+' 00:00:00';
+        end=date.toLocaleDateString().replace(/\//g,'-')+' 23:59:59';
+
+        var d_begin = begin;
+        var d_end = end;
+        if (go_dCreate != null && over_dCreate != null) {
+            d_begin = go_dCreate.value;
+            begin = go_dCreate.value;
+            d_end = over_dCreate.value;
+            end = over_dCreate.value;
+
+        }
+
+
+        var para_json_obj = {
+            layer_table_define_obj: table,
+            layer_table_column_obj: table_column_data,
+            ajax_url: "/SPRING-CLOUD-BASE/errorLog/errorLogList",//ajax请求附带的参数
+            ajax_json_data: {dbegin: d_begin, dend: d_end},
+            dom_table_id: "errorLogDOList",
+            dom_bar_id: "toolbarDemo",
+            callback: function (res, curr, count) {
+            }
+        };
+        initPageTableData(para_json_obj);
+        initPageData();
+    }
+
+</script>
+</body>
+</html>

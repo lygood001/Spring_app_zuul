@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+
+<div style="position: absolute; top:5px; left:200px; z-index: 999;">
+
+</div>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container layui-inline">
+        <button class="layui-btn layui-btn-sm" onclick="adddealershcItem()">新增二手车经销商数据</button>
+    </div>
+        根据经销商代码或经销商名称查询：
+    <div class="layui-inline layui-inline">
+        <input class="layui-input" name="id" id="selectdealershc" autocomplete="off">
+    </div>
+    <button class="layui-btn layui-btn-sm" onclick="selectdealershc()">搜索</button>
+</script>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+</script>
+
+<script  th:inline="none">
+    var table = layui.table;
+    var columns_show_json =[[
+        {field: 'vCode', width: 150, title: '经销商代码', sort: true}
+        ,{field:'vFullName', width:150, title: '经销商名称'}
+        ,{field:'vCityName', width:150, title: '经销商所在城市'}
+        ,{field:'vAdress', width:150, title: '经销商地址'}
+        ,{field:'shcLevel', width:150, title: '二手车发展级别'}
+        ,{field:'vBuildingStyle', width:150, title: '二手车建筑类型'}
+        ,{field:'displayStyle', width:150, title: '二手车展厅类型'}
+        ,{field:'nInBooths', width:150, title: '二手车室内展位'}
+        ,{field:'nOutBooths', width:150, title: '二手车室外展位'}
+        ,{field:'dInAuth', width:150, title: '二手车业务授权时间', sort: true}
+        ,{field:'dDevelop', width:150, title: '二手车升级到发展级的日期', sort: true}
+        ,{field:'dOutAuth', width:150, title: '二手车业务退网日期', sort: true}
+        ,{field:'dCreate', width:150, title: '创建时间', sort: true}
+        ,{field:'dUpdate', width:150, title: '更改时间', sort: true}
+        ,{field:'vCreatorName', width:100, title: '创建者'}
+        ,{field:'vRemark', width:150, title: '备注'}
+        ,{fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+    ]];
+
+    $(function () {
+        initPageData();
+        initPageEvent();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData()
+    {
+        var para_json_obj  = {
+            layer_table_define_obj:table,
+            layer_table_column_obj:columns_show_json,
+            ajax_url:"/app/dealerShc/list",
+            ajax_json_data:{},
+            dom_table_id:"test",
+            dom_bar_id:"toolbarDemo",
+            callback:function(res, curr, count){
+            }
+        };
+        initPageTableData(para_json_obj);
+    }
+    /**
+     * 点击事件注册
+     */
+    function initPageEvent()
+    {
+        //删除，修改
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('您确定要删除该条数据？', function (index) {
+
+                    var canshu={
+                        "id":data.vCode
+                    };
+                    callAjax("/app/dealerShc/remove",canshu,function (jsonData,Status) {
+                        if(jsonData.code=='S')
+                        {
+                            obj.del();
+                            dmstoast("删除成功","W");
+                            layer.close(index);
+                        }else{
+                            dmstoast("删除失败","W");
+                        }
+                    },0);
+                });
+            }
+
+            else if (obj.event === 'edit') {
+                WindowsShow('修改图片配置','/dealerShc/update?id=' + data.vCode,'600','600');
+            }
+        });
+    }
+
+
+    function selectdealershc()
+    {
+        var selectvalue=$("#selectdealershc").val()
+        var para_json_obj  = {
+            layer_table_define_obj:table,
+            layer_table_column_obj:columns_show_json,
+            ajax_url:"/app/dealerShc/selectdealershc",
+            ajax_json_data:{'selectds':selectvalue},
+            dom_table_id:"test",
+            dom_bar_id:"toolbarDemo",
+            callback:function(res, curr, count){
+                document.getElementById("selectdealershc").value=selectvalue;
+            }
+        };
+        initPageTableData(para_json_obj);
+    }
+
+    //新增
+    function adddealershcItem() {
+        WindowsShow('添加二手车经销商','/dealerShc/add','600','600');
+    }
+</script>
+
+</body>
+</html>

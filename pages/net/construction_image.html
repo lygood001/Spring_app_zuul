@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<input type="hidden" id="id" th:value="${id}">
+<div class="construction-image-group" id="group">
+    <!--<h4 class="title"><span>表单集合演示</span></h4>-->
+    <!--<ul>-->
+    <!--<li class="item-img item-img-show">-->
+    <!--<div class="img layui-icon">-->
+    <!--<img src="../admin/plus/WeAdmin/images/bg.jpg"/>-->
+    <!--<input type=" file">-->
+    <!--</div>-->
+    <!--<a href="javascript:;" class="layui-icon">&#x1006;</a>-->
+    <!--</li>-->
+    <!--<li class="item-img">-->
+    <!--<div class="img layui-icon">-->
+    <!--<img/>-->
+    <!--<input type="file">-->
+    <!--</div>-->
+    <!--<a href="javascript:;" class="layui-icon">&#x1006;</a>-->
+    <!--</li>-->
+    <!--</ul>-->
+</div>
+
+<script th:inline="none">
+    var table = layui.table,
+        form = layui.form;
+    var group = $("#group");
+    $(function () {
+        getstatus();
+    })
+
+    /**
+     * 获取数据字典 状态信息
+     */
+    var str = "";
+    function getstatus() {
+        // getDictItemForList
+        var ajax_url = '/app/dict/getDictItemForList';
+        var jsonDataObj = {vDictCode: "construction_status"};
+        callAjax(ajax_url, jsonDataObj, function deleteDictCB(jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+
+
+                ajax_url = '/app/construction/getImgInfo';
+                jsonDataObj = { nConstruction: $("#id").val()};
+                callAjax(ajax_url, jsonDataObj, function deleteDictCB(jsonDatas, status) {
+                    if (jsonDatas.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+
+                        str = "";
+                        for (var i = 0; i < jsonData.data.length; i++) {
+                            var data = jsonData.data[i];
+                            str += ' <h4 class="title"><span>' + data.vDesc + '</span></h4>';
+                            str += " <ul >";
+
+                            for (var j = 0; j < jsonDatas.data.length; j++) {
+
+                                var dataImgInfo = jsonDatas.data[j];
+                                   if(dataImgInfo.vStatus==data.vCode){
+
+
+                                    str += ' <li class="item-img item-img-show">'
+                                    str +=    '                    <div class="img layui-icon">'
+                                    str +=    '                        <img src="' + dataImgInfo.imgUrl + '" onclick="previewImgs(this)" />'
+                                    str +=    '                        <input type=" file">'
+                                    str +=    '                    </div>'
+                                    str +=    '                    <a href="javascript:;" date-id="' + dataImgInfo.id + '" date-nAttachment="' + dataImgInfo.nAttachment + '" class="layui-icon" onclick="ImgDel(this)">&#x1006;</a>'
+                                    str +=    '                </li>';
+
+                                 }
+                            }
+                            str += '  <li class="item-img">'
+                            str +=   '            <div class="img layui-icon">'
+                            str +=    '                <img/>'
+                            str +=   '                <input type="file" name="file" onchange="ImgBase64(this)" vStatus="' + data.vCode + '">'
+                            str +=   '            </div>'
+                            str +=  '            <a href="javascript:;" class="layui-icon" vStatus="' + data.vCode + '">&#x1006;</a>'
+                            str +=   '        </li>'
+                            str += " </ul>"
+                        }
+
+
+                        group.append(str);
+                    } else {
+                        dmsalert(jsonDatas.msg, "E");
+                    }
+                });
+
+
+
+            } else {
+                dmsalert(jsonData.msg, "E");
+            }
+        });
+    }
+
+    var imgBase64;
+    function fileChange(file) {
+        var ajax_url = '/app/construction/saveConstructionImg';
+        var jsonDataObj = {vStatus: file.getAttribute("vStatus"), id: $("#id").val(),img:imgBase64};
+        callAjax(ajax_url, jsonDataObj, function deleteDictCB(jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+               // file.prev().setAttribute("src",jsonData);
+                var str="";
+                var data=jsonData.data;
+                var ul=file.parentNode.parentNode;
+                str +=    ' <li class="item-img item-img-show">'
+                str +=    '                    <div class="img layui-icon">'
+                str +=    '                        <img src="' + data.imgUrl + '" onclick="previewImgs(this)" />'
+                str +=    '                        <input type=" file">'
+                str +=    '                    </div>'
+                str +=    '                    <a href="javascript:;" date-id="' + data.id + '" date-nAttachment="' + data.nAttachment + '" class="layui-icon" onclick="ImgDel(this)">&#x1006;</a>'
+                str +=    '    </li>';
+                var $v=$(ul); //jQuery对象
+                $v.before(str)
+
+            } else {
+                dmsalert(jsonData.msg, "E");
+            }
+        });
+    }
+    function ImgBase64(data) {
+        var reads= new FileReader();
+        f=data.files[0];
+        reads.readAsDataURL(f);
+        reads.onload=function (e) {
+            imgBase64=this.result;
+            console.log()
+            fileChange(data);
+        };
+    }
+
+    function ImgDel(data) {
+        var ajax_url = '/app/construction/ImgDel';
+        var jsonDataObj = {id: data.getAttribute("date-id")};
+        callAjax(ajax_url, jsonDataObj, function deleteDictCB(jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                // file.prev().setAttribute("src",jsonData);
+                dmsalert('删除在建经销商图片!', "S", function () {
+                    window.location.reload();//修改成功后刷新父界面
+                });
+            } else {
+                dmsalert(jsonData.msg, "E");
+            }
+        });
+
+    }
+    //原图预览
+    function previewImgs(obj) {
+        var img = new Image();
+        img.src = obj.src;
+        var height = img.height*0.4 + 50; //获取图片高度
+        var width = img.width*0.4; //获取图片宽度
+        var imgHtml = "<img src='" + obj.src + "' style='width: 100%;height: auto;';/>";
+        //弹出层
+        layer.open({
+            type: 1,
+            shade: 0.8,
+            offset: 'auto',
+            area: [width + 'px',height+'px'],
+            shadeClose:true,//点击外围关闭弹窗
+            scrollbar: false,//不现实滚动条
+            title: "图片预览", //不显示标题
+            content: imgHtml, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+            cancel: function () {
+                //layer.msg('捕获就是从页面已经存在的元素上，包裹layer的结构', { time: 5000, icon: 6 });
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

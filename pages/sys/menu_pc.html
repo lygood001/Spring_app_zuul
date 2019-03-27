@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC menu page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+</head>
+<body  style="height: 100%">
+<div style="height: 100%">
+    <div style="height: 100%;float: left;width : 22%">
+        <ul id="demo" style=" border:5px solid black; width: 100%; height: 100%;overflow:auto;"></ul>
+    </div>
+    <form class="layui-form" action="" lay-filter="menuAdd" style="float:right;width: 78%">
+        <input type="hidden" name="id" id="inp_id">
+        <div class="layui-form-item">
+            <div class="layui-form-item">
+                <label class="layui-form-label">菜单类型</label>
+                <div class="layui-input-block" id="div_PC_menu_type">
+                    PC 后台服务端
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-form-item">
+                <label class="layui-form-label">菜单分组</label>
+                <div class="layui-input-block">
+                    <select name="nParentId" lay-filter="menuGroup">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单代码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="vMenuCode" id="inp_menuCode" required lay-verify="required" placeholder="请输入菜单代码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单描述</label>
+            <div class="layui-input-inline">
+                <input type="text" name="vMenuDesc" id="inp_menuDesc" required lay-verify="required" placeholder="请输入菜单描述" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单url</label>
+            <div class="layui-input-inline">
+                <input type="text" name="vMenuUrl" required id="inp_menuUrl" lay-verify="required" placeholder="请输入菜单url" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">停用标识</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="vStopFlag" value="0" lay-text="未停用|已停用"  lay-filter="stop" checked="true" id="inp_menuStopFlg" lay-skin="switch">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formDemo" id="btn_sub">保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary" style="display: none" id="btn_clean" onclick="cleanFormData()">清空新建</button>
+                <button type="button" class="layui-btn layui-btn-primary" style="display: none" id="btn_del" onclick="delThis()">删除此项</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script th:inline="none">
+    $(function () {
+        initData();
+    });
+    form.on('switch(stop)', function(data){
+        var stop;
+        if (data.elem.checked) {
+            stop = 0;
+            vstop = 0 ;
+        } else {
+            stop = 1;
+            vstop = 1 ;
+        }
+        $("#vStop").val(stop);
+    });
+    function initData(setSelect) {
+        var form = layui.form;
+        form.val("menuAdd", {});
+        var userInfo = getUserInfo();
+        var url="/SPRING-CLOUD-SYS/menu/getAllMenuTree";
+        var data={};
+        callAjax(url,data,function (jsonData ,status) {
+            if(jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK){
+                $("#demo").html("");
+                var options = {
+                    elem: '#demo',
+                    skin : '',
+                    href : '',
+                    target : '',
+                    click : function(node){
+                        setData(node);
+                    },
+                    nodes : transData(jsonData.data, 'value', 'pid', 'children') ,
+                };
+                layui.use('tree', function(){
+                    layui.tree(options);
+                });
+                $("#div_btn").css("display","");
+                initMenuGroup(setSelect);
+            }else{
+                dmsalert(jsonData.msg, "W");
+            }
+        });
+    }
+
+
+    function initMenuGroup(setSelect)
+    {
+        callAjax("/SPRING-CLOUD-SYS/menu/getPCMenuGroup",{},function (data,status) {
+            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                var selMenuGroup = $("select[name='nParentId']");
+                selMenuGroup.html("");
+                selMenuGroup.append("<option value='0' >" + '主菜单' + "</option>")
+                for (var i = 0;i < data.data.length;i++){
+                    var opt = "<option value='" + data.data[i].ID + "'>" + data.data[i].vMenuDesc + "</option>";
+                    selMenuGroup.append(opt);
+                }
+                form.render('select');
+                var selMenuGroup = $("select[name='nParentId']").find("option");
+                $.each(selMenuGroup,function () {
+                    if(this.value == setSelect){
+                        $(this).prop("selected",true);
+                    }
+                });
+                form.render('select');
+            }else{
+                dmsalert(data.msg, "W");
+            }
+
+        });
+    }
+    function transData(a, idStr, pidStr, chindrenStr) {
+        var r = [], hash = {}, id = idStr, pid = pidStr, children = chindrenStr, i = 0, j = 0, len = a.length;
+        for (; i < len; i++) {
+            hash[a[i][id]] = a[i];
+        }
+        for (; j < len; j++) {
+            var aVal = a[j], hashVP = hash[aVal[pid]];
+            if (hashVP) {
+                !hashVP[children] && (hashVP[children] = []);
+                hashVP[children].push(aVal);
+            } else {
+                r.push(aVal);
+            }
+        }
+        return r;
+    }
+
+    function getMenuType(){
+        callAjax("/SPRING-CLOUD-SYS/menu/getPCMenuType",{},function (jsonData ,status) {
+            if(jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK){
+                $("#div_PC_menu_type").html(jsonData.data);
+            }else{
+                dmsalert(jsonData.msg, "W");
+            }
+        });
+    }
+
+    function setData(formData){
+        $("#inp_menuStopFlg")
+        $("#inp_menuCode").val(formData.vMenuCode);
+        $("#inp_menuCode").prop("disabled",true);
+        $("#inp_menuDesc").val(formData.name);
+        $("#inp_menuUrl").val(formData.vMenuUrl);
+        $("#inp_id").val(formData.value);
+        if(formData.vStopFlag == '0'){
+            layui.jquery('input[name="vStopFlag"]').next().addClass('layui-form-onswitch'); //开
+            layui.jquery('input[name="vStopFlag"]').next().find("em").html("未停用");
+            layui.jquery('input[name="vStopFlag"]').prop('checked','checked');
+            $("#inp_menuStopFlg").attr('checked',true);
+        }else{
+            layui.jquery('input[name="vStopFlag"]').next().removeClass('layui-form-onswitch'); //关
+            layui.jquery('input[name="vStopFlag"]').prop('checked','');
+            layui.jquery('input[name="vStopFlag"]').next().find("em").html("已停用");
+            $("#inp_menuStopFlg").attr('checked',false);
+        }
+        var selMenuGroup = $("select[name='nParentId']").find("option");
+        $.each(selMenuGroup,function () {
+            if(this.value == formData.pid){
+                $(this).prop("selected",true);
+            }
+        });
+        form.render('select');
+        $("#btn_clean").css("display","");
+        $("#btn_del").css("display","");
+        $("#btn_sub").html("提交更新");
+    }
+    function cleanFormData() {
+        $("#inp_id").val("");
+        $("#inp_menuCode").val("");
+        $("#inp_menuDesc").val("");
+        $("#inp_menuUrl").val("");
+        $("#inp_menuCode").prop("disabled",false);
+        $("#btn_clean").css("display","none");
+        $("#btn_del").css("display","none");
+        $("#btn_sub").html("保存");
+        layui.jquery('input[name="vStopFlag"]').next().addClass('layui-form-onswitch'); //开
+        layui.jquery('input[name="vStopFlag"]').next().find("em").html("未停用");
+        layui.jquery('input[name="vStopFlag"]').prop('checked','checked');
+        $("#inp_menuStopFlg").attr('checked',true);
+    }
+    form.on('submit(formDemo)', function(data){
+        if (data.field.vStopFlag == "0") {
+            data.field.vStopFlag = "0";
+        } else {
+            data.field.vStopFlag = "1";
+        }
+                var url = "";
+                var tempStr = ""
+                if($("#inp_id").val()==""){
+                    url="/SPRING-CLOUD-SYS/menu/savePCMenu";
+                    tempStr = "保存成功";
+                }else{
+                    url="/SPRING-CLOUD-SYS/menu/updatePCMenu";
+                    tempStr = "修改成功";
+                }
+                if($("#inp_id").val() == data.field.nParentId){
+                    dmsalert("操作错误","W");
+                    return false;
+                }else{
+                    callAjax(url,data.field,function (data,status) {
+                        if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                            dmsalert(tempStr,"S",function(){
+                                $("#inp_id").val(data.data.id);
+                                $("#btn_clean").css("display","");
+                                $("#btn_del").css("display","");
+                                initData(data.data.nparentId);
+
+                                $("#btn_sub").html("提交更新");
+
+                            });
+                        } else {
+                            dmsalert(data.msg,"W");
+                        }
+                    })
+                }
+        return false;
+    });
+    function delThis() {
+        var url = "/SPRING-CLOUD-SYS/menu/delPCMenu";
+        var postData = {id : $("#inp_id").val()};
+        callAjax(url,postData,function (data,status) {
+            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                dmsalert('删除成功',"S",function(){
+                    cleanFormData();
+                    initData(0);
+                });
+            } else {
+                dmsalert(data.msg,"W");
+            }
+        })
+    }
+</script>
+
+</body>
+</html>

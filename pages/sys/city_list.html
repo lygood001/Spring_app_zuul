@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>city list page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<style>
+    .layui-table-cell1 {
+        display: none;
+    }
+</style>
+<body>
+<form class="layui-form" action="" style="position: absolute; top: 5px;left: 135px; z-index: 999;">
+    <div class="layui-form-item proSelect">
+        <label class="layui-form-label" style="padding: 11px 10px 11px 0px;width:100px;">按省份名称搜索</label>
+        <div class="layui-input-block editWidth">
+            <select name="vProvinceCode" lay-verify="required" id="select_leavel1" style="width: 242px" class="select_leavel1" lay-filter="business">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+</form>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData" onclick="addCityItem()">添加城市</button>
+    </div>
+</script>
+<table class="layui-hide" id="cityDOList" lay-filter="test"></table>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+</script>
+<script th:inline="none">
+    var table = layui.table;
+    var form = layui.form;
+
+    var table_column_data = [[
+        {field: 'id', width: 100, title: 'id', sort: true, hide: true}
+        , {field: 'vProCode', width: 150, title: '省份编号'}
+        , {field: 'vProName', width: 100, title: '省份名称', sort: true}
+        , {field: 'vCityCode', width: 150, title: '城市编号'}
+        , {field: 'vCityName', width: 150, title: '城市名称', sort: true}
+        , {field: 'vCityFixer', width: 100, title: '城市首字母', sort: true}
+        , {field: 'vCreatorName', width: 100, title: '创建者'}
+        , {field: 'dCreate', width: 100, title: '创建时间'}
+        , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+    ]];
+
+    $(function () {
+        initTableData("");
+        initProvinceSelect();
+        initPageEvent();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initTableData(province_code)
+    {
+        var para_json_obj = {
+            "layer_table_define_obj": table,//layer创建的table对形象
+            "layer_table_column_obj": table_column_data,//[[表格样式]]
+            "ajax_url": "/SPRING-CLOUD-SYS/city/cityListByProvince",//ajax请求附带的参数
+            "ajax_json_data": { vProCode:province_code},
+            "dom_table_id": "cityDOList",//页面中dom对象的table id
+            "dom_bar_id": "toolbarDemo",//页面上方增删改查按钮
+            "callback": function () {
+            }
+        };
+        initPageTableData(para_json_obj);
+    }
+    /**
+     * 初始化页面事件
+     */
+    function initPageEvent() {
+        //删除 修改
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            // console.log(obj)
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+                    callAjax('/SPRING-CLOUD-SYS/city/remove', {id: data.id}, function (data) {
+                        if (data.code == "S") {
+                            dmsalert('删除城市信息成功', "S");
+                            obj.del();
+                        } else {
+                            dmsalert('删除城市信息失败', "E");
+                        }
+                    })
+                });
+            } else if (obj.event === 'edit') {
+                WindowsShow('修改城市信息','city_update.html?cityId=' + data.id,'600','600');
+            }
+        });
+
+        //   选择下拉列表
+        form.on('select(business)', function(data){
+
+            if(data.value=="all")
+            {
+                initTableData("");
+            }
+            else {
+                initTableData(data.value);
+            }
+        });
+    }
+
+
+
+    function addCityItem() {
+        WindowsShow('添加城市','city_add.html','600','600');
+    }
+
+    /**
+     *
+     * 初始省份下拉数据
+     */
+
+    function initProvinceSelect()
+    {
+        //设置页面的省份来源列表
+        callAjax("/SPRING-CLOUD-SYS/province/getallprovincelist",{},function (data) {
+            if (data.code == "S") {
+                var select_obj = $("select[name='vProvinceCode']");
+                var opt="";
+                opt+='<option value="all">全部</option>';
+
+                    for (var i = 0; i < data.data.length; i++) {
+                        opt+= "<option value='" + data.data[i].vProCode + "'>" + data.data[i].vProName + "</option>";
+                }
+                select_obj.append(opt);
+                form.render('select');
+            } else {
+                dmstoast('获取省份来源列表失败！',"W");
+            }
+        });
+    }
+
+
+
+</script>
+</body>
+</html>

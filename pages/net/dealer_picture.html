@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<style>
+    .layui-upload-img {
+        width: 100%;
+        height: 100%;
+    }
+
+
+    .layui-input-block{
+        margin-right: 100px;
+        text-align: center;
+    }
+
+    .layui-form .layui-form-item .layui-input-block {
+        border: none;
+    }
+
+    .layui-form .layui-form-item .layui-input-block .img-onload {
+        display: inline-block;
+        width: 92px;
+        height: 38px;
+        position: relative;
+    }
+
+    .layui-form .layui-form-item .layui-input-block .img-onload:before {
+        content: "选择图片";
+        width: 92px;
+        height: 38px;
+        line-height: 38px;
+        text-align: center;
+        color: #fff;
+        background: #bb0a30;
+        font-size: 14px;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border-radius: 3px;
+        z-index: 10;
+    }
+
+
+    .layui-form .layui-form-item .layui-input-block .img-onload .layui-input {
+        position: absolute;
+        padding: 0px;
+        height: 38px;
+        top: 0px;
+        z-index: 20;
+        opacity: 0;
+    }
+</style>
+<form class="layui-form" action="/app/dealer/Upload" lay-filter="form" id="formFile" enctype="multipart/form-data">
+    <input id="id" name="id" type="hidden" th:value="${dealerDO.id}">
+    <input id="nImgUploadFlag" name="nImgUploadFlag" type="hidden" th:value="${dealerDO.nImgUploadFlag}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择图片</label>
+        <div class="layui-input-block">
+            <div class="img-onload">
+                <input type="file" name="file" required placeholder="请输入标题" autocomplete="off" class="layui-input"
+                       onchange="UploadImg(this)">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <div class="layui-upload-list">
+                <img class="layui-upload-img" id="vdealerImgUrl" name="vdealerImgUrl"
+                     th:src="${dealerDO.vdealerImgUrl}">
+                <p id="demoText"></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">上传图片</button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    var imgBase64;
+    layui.use('form', function () {
+        var form = layui.form;
+        form.on('submit(formDemo)', function (data) {
+            if (!isNullOrEmpty(imgBase64)) {
+                var jsonData = {
+                    id: data.field.id,
+                    updateFlag: data.field.nImgUploadFlag,
+                    img: imgBase64
+                };
+                callAjax("/app/dealer/Upload", jsonData, function (jsonData, status) {
+                    if (jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                        dmsalert("上传经销商图片成功", "S", function () {
+                            window.parent.location.reload();//修改成功后刷新父界面
+                            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(index);
+                        });
+                    } else {
+                        dmsalert(jsonData.msg, "W");
+                    }
+                }, 0)
+                return false;
+            }
+        });
+    });
+
+    function UploadImg(data) {
+        var reads = new FileReader();
+        f = data.files[0];
+        reads.readAsDataURL(f);
+        reads.onload = function (e) {
+            imgBase64 = this.result;
+            document.getElementById('vdealerImgUrl').src = this.result;
+        };
+    }
+
+</script>
+</body>
+</html>

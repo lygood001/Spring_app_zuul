@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form" action="/dict/updateDictItem" lay-filter="fromUpdate"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <input id="id" name="id" type="hidden" th:value="${dict.id}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">省份编号</label>
+        <div class="layui-input-block">
+            <input type="text" readonly="readonly" name="vProCode" placeholder="请输入" autocomplete="off" class="layui-input"  th:value="${dict.vMainCode}">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">城市编号</label>
+        <div class="layui-input-block">
+            <input type="text" readonly="readonly" name="vCityCode" placeholder="请输入" autocomplete="off" class="layui-input"  th:value="${dict.vMainName}">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">城市名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="vCityName" placeholder="请输入" autocomplete="off" class="layui-input"  th:value="${dict.vCode}">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">城市首字母</label>
+        <div class="layui-input-block">
+            <input type="text" name="vCityFixer" placeholder="请输入" autocomplete="off" class="layui-input"  th:value="${dict.vDesc}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <input type="text" name="vRemark" placeholder="请输入" autocomplete="off" class="layui-input"  th:value="${dict.vRemark}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+        form.on('switch(stop)', function(data){
+            var stop;
+            if (data.elem.checked) {
+                stop = 0;
+            } else {
+                stop = 1;
+            }
+            $("#vStopFlag").val(stop);
+        });
+
+        form.on('submit(*)', function(data){
+            //console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+            // console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+            //console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index);
+            window.parent.location.reload();//修改成功后刷新父界面
+        });
+    });
+</script>
+</body>
+</html>

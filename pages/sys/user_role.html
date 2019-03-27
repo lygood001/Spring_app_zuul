@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form" lay-filter="fromAdd" id="pageForm"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <input type="hidden" id="dataId" value="">
+    <div class="layui-form-item" id="div_but">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" lay-submit lay-filter="sub_btn" onclick="saveData()">保存</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/html" id="checkBoxDemo">
+    <div class="layui-form-item" pane="">
+        <div class="layui-input-block">
+            <input type="checkbox" name="like1[write]" value="{{value}}" {{checked}} lay-skin="primary" title="{{vDesc}}" >
+        </div>
+    </div>
+</script>
+<script>
+    var form = layui.form;
+    var url="/SPRING-CLOUD-SYS/user/userRoleList";
+    console.log($("#dataId").val());
+    setTimeout(function () {
+        callAjax(url,{id:$("#dataId").val()},function (jsonData,status) {
+            if(jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK){
+
+                var connectStr="";
+                $.each(jsonData.data,function (key,value) {
+                    var temp = $("#checkBoxDemo").html();
+                    temp=temp.replace("{{vDesc}}",value.V_DESC);
+                    if(value.checked == "1"){
+                        temp=temp.replace("{{checked}}",'checked');
+                    }else{
+                        temp=temp.replace("{{checked}}",'');
+                    }
+                    temp=temp.replace("{{value}}",value.ID);
+                    connectStr+=temp;
+                });
+                $("#div_but").before(connectStr);
+                console.log(connectStr);
+                console.log(jsonData);
+                form.render();
+            } else {
+                dmsalert(jsonData.msg, "W");
+            }
+        });
+    },100);
+
+    function saveData() {
+       var arr = new Array();
+       var userId = $("#dataId").val();
+        $.each( $("input:checkbox:checked"),function () {
+            arr.push({userId : userId , roleId : this.value});
+        });
+        var url = "/app/UserRole/save";
+        var data="";
+        var data={
+            userId : $("#dataId").val(),
+            roleIds : arr
+        };
+        callAjax(url,data,function (jsonData,status) {
+            if(jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK){
+                dmsalert('保存成功','S',function(){
+                    window.parent.location.reload();
+                    var index = parent.layer.getFrameIndex( window.name);
+                    parent.layer.close(index);
+                });
+            }else{
+                dmsalert(jsonData.msg, "W");
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

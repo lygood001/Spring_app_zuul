@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form" lay-filter="from"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>账号</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vAccount" placeholder="请输入" lay-verify="required" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>手机号</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vMobile" placeholder="请输入" lay-verify="phone" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>密码</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vPassword" placeholder="请输入" lay-verify="required" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>用户代码</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vSalt" placeholder="请输入" lay-verify="required" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>姓名</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vRealName" placeholder="请输入" lay-verify="required" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>昵称</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vNickName" placeholder="请输入" lay-verify="required" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>年龄</span></label>
+        <div class="layui-input-block">
+            <input type="number" name="nAge" placeholder="请输入" lay-verify="number" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>邮箱</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vMail" placeholder="请输入" lay-verify="email" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>所在城市</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vCity" placeholder="请输入" lay-verify="required" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>是否停用</span></label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="stop" lay-skin="switch" id="nStop" value="0" lay-text="未停用|已停用"
+                   lay-filter="stop">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+    <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<script>
+    var form = layui.form;
+    $(function () {
+        initPageData();
+        initPageEvent();
+    });
+
+
+    function initPageData() {
+        form.val("from", {});
+        form.on('switch(stop)', function (data) {
+            var stop;
+            if (data.elem.checked) {
+                stop = 0;
+            } else {
+                stop = 1;
+            }
+            $("#nStop").val(stop);
+        });
+    }
+
+
+
+    function initPageEvent() {
+        form.on('submit(*)', function (data) {
+            if (data.field.stop == "on") {
+                data.field.stop = "1";
+            } else {
+                data.field.stop = "0";
+            }
+            callAjax("/SPRING-CLOUD-SYS/user/save", data.field, function (jsonData, CALL_URL_OK) {
+                if (CALL_URL_OK == 1 && jsonData.code == "S") {
+                    dmsalert("保存成功", "S",function(){
+                    	var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index);
+                    window.parent.location.reload();//修改成功后刷新父界面
+                    });
+                } else {
+                    dmsalert("保存失败", "S");
+                }
+
+            }, 0)
+            return false;
+        });
+    };
+
+</script>
+</body>
+</html>

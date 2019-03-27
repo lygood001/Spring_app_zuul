@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form" lay-filter="fromAdd"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">版本类型</label>
+        <div class="layui-input-block">
+            <input type="text" name="vOsType" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">版本号</label>
+        <div class="layui-input-block">
+            <input type="text" name="vVersion" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">App名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="vAppName" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">下载路径</label>
+        <div class="layui-input-block">
+            <input type="text" name="vApkUrl" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否获取</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="inStore" lay-skin="switch" id="vInStore" value="N" lay-text="未获取|已获取"
+                   lay-filter="stop">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="sub_btn">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+    <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<script>
+    var form = layui.form;
+    form.val("fromAdd", {});
+    $(function () {
+        initPageData();
+        initPageEvent();
+    });
+
+    function initPageData() {
+        // form.val("from", {});
+        form.on('switch(stop)', function (data) {
+            var stop;
+            if (data.elem.checkd) {
+                stop = 0;
+                inStore = 0;
+            } else {
+                stop = 1;
+                inStore = 1;
+            }
+            $("#vInStore").val(stop);
+        });
+    }
+
+    function initPageEvent() {
+        form.on('submit(sub_btn)', function (data) {
+            var url ="/app/version/save";
+            var post_data={};
+            post_data.vOsType =data.field.vOsType;
+            post_data.vVersion =data.field.vVersion;
+            post_data.vAppName =data.field.vAppName;
+            post_data.vApkUrl =data.field.vApkUrl;
+            if ($("input[name='inStore']").is(":checked")){
+                post_data.vInStore = "Y";
+            } else {
+                post_data.vInStore = "N";
+            }
+            // if (data.field.vInStore == "on") {
+            //     data.field.vInStore = "N";
+            // } else {
+            //     data.field.vInStore = "Y";
+            // }
+            callAjax(url, post_data, function (jsonData, status) {
+                if (jsonData.code == "S") {
+                    // console.log("11");
+                    // console.log(jsonData);
+                    dmsalert("维护版本信息成功", "S");
+                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index);
+                    window.parent.location.reload();//修改成功后刷新父界面
+                } else {
+                    dmsalert(jsonData.msg, "E");
+                }
+
+            });
+            return false;
+        });
+    }
+
+</script>
+</body>
+</html>

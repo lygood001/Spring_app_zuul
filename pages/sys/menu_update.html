@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" xmlns:hide="http://www.w3.org/1999/xhtml">
+<meta charset="utf-8">
+<head>
+	<meta charset="utf-8">
+	<!--CSS-->
+	<link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+	<link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+	  
+	<script> 
+	    document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+	    document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+	</script>
+</head>
+<body>
+<form class="layui-form" lay-filter="formUpdate" id="data_form">
+    <div class="layui-form-item layui-hide">
+        <label class="layui-form-label">菜单id</label>
+        <div class="layui-input-block">
+            <input type="text" v-bind:value="group_data.id"  name="id" required  lay-verify="required" placeholder="请输入菜单类型" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单类型</span></label>
+        <div class="layui-input-block">
+            <select v-bind:value="group_data.vMenuType" name="vMenuType" lay-filter="menuType">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单分组</span></label>
+        <div class="layui-input-block">
+            <select v-bind:value="group_data.vMenuGroup" name="vMenuGroup" lay-filter="menuType">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单代码</span></label>
+        <div class="layui-input-inline">
+            <input type="text" v-model:value="group_data.vMenuCode" name="vMenuCode" required lay-verify="required" placeholder="请输入菜单代码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单描述</span></label>
+        <div class="layui-input-inline">
+            <input type="text" v-model:value="group_data.vMenuDesc" name="vMenuDesc" required lay-verify="required" placeholder="请输入菜单描述" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单样式</span></label>
+        <div class="layui-input-inline">
+            <input type="text" :value="group_data.vCssCode" name="vCssCode" required lay-verify="required" placeholder="请输入菜单样式代码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单来源</span></label>
+        <div class="layui-input-block">
+            <select :value="group_data.vFrom" name="vFrom" lay-filter="menuFrom">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单url</span></label>
+        <div class="layui-input-inline">
+            <input type="text" v-model:value="group_data.vMenuUrl" name="vMenuUrl" required lay-verify="required" placeholder="请输入菜单url" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单动作</span></label>
+        <div class="layui-input-inline">
+            <textarea  style="width: 500px; height: 150px;"  v-model:value="group_data.vInstruction" name="vInstruction" required lay-verify="required" placeholder="请输入菜单动作" autocomplete="off" class="layui-input"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>停用标识</span></label>
+        <div class="layui-input-block">
+            <input type="checkbox" :value="group_data.vStopFlag" name="vStopFlag" lay-skin="switch" lay-text="未停用|已停用" lay-filter="stop"  :checked="group_data.vStopFlag == '0'?'true':'false'">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label" onclick="F_Open_dialog()"><span>选择图标</span></label>
+        <div class="layui-input-block">
+            <input type="file" id="btn_file" onchange="imgChange(this)" style="display:none">
+            <img id="imgShow" :src="group_data.vFileUrl" style="height: 40px;width: 40px;">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script>
+    var form = layui.form;
+    form.val("formUpdate",{});
+    var userInfo = getUserInfo();
+	var vm = new Vue({
+		el:"#data_form",
+		data:
+		{
+			group_data: {},
+		}
+	 }); 
+
+    $(function () {
+		var url="/SPRING-CLOUD-SYS/menu/updateOpen"; 
+		callAjax(url,{vMenuCode:getURLParameter("vMenuCode")},function (jsonData,status) {
+		    if (jsonData.code =="S" && status == dms_boot_config.CALL_URL_OK) {
+		    	
+		         console.log('-----/>' + JSON.stringify(jsonData.data));
+		         vm.group_data = jsonData.data; 
+				 form.render();
+		    }else{
+		        dmsalert(jsonData.msg, "E");
+		    }
+		});
+		initPageData();
+		initPageEvent();
+    });
+    function initPageData(){
+        initMenuType();
+        initMenuGroup();
+        initMenuFrom();
+
+    }
+    function initPageEvent() {
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            if($('input[name="vStopFlag"]').is(':checked')){
+                data.field.vStopFlag = "0";
+            } else {
+                data.field.vStopFlag = "1";
+            }
+
+            data.field.base64str = null;
+            //获取图片url转成base64
+            var reader = new FileReader();
+            var imgUrlBase64;
+            //取图片对象
+            var file = $("#btn_file")[0].files[0];
+			console.log('========' + JSON.stringify(data.field));
+            if (file) {
+                //input标签（files）有文件路径说明是更新了图标，需要将图片转为base64传给后台
+                //将文件以Data URL形式读入页面
+                imgUrlBase64 = reader.readAsDataURL(file);
+                vUrl = window.URL.createObjectURL(file);
+                reader.onload = function (e) {
+                    //执行上传操作
+                    data.field.base64str = reader.result;
+                    callAjax("/SPRING-CLOUD-SYS/menu/update",data.field,function (data) {
+                        if (data.code == "S") {
+                            dmsalert(data.msg,"S",function(){
+                                window.parent.location.reload();
+                                var index = parent.layer.getFrameIndex(window.name);
+                                parent.layer.close(index);
+                            })
+                        } else {
+                            dmsalert(data.msg);
+                        }
+                    })
+                }
+            } else {
+                //说明没有修改图标的更新不需要上传附件
+                if ($("#imgShow").attr("src") != null){
+                    callAjax("/SPRING-CLOUD-SYS/menu/update",data.field,function (data) {
+                        if (data.code == "S") {
+                            dmsalert('修改成功');
+                            window.parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        } else {
+                            dmsalert(data.msg);
+                        }
+                    })
+                }
+            }
+            return false;
+        });
+    }
+    function initMenuType(){
+        //设置页面的菜单类型列表
+        callAjax("/SPRING-CLOUD-SYS/dict/getDictItemForList",{"vDictCode" : "menu_type"},function (data) {
+            if (data.code == "S") {
+                var selMenuType = $("select[name='vMenuType']");
+                for (var i = 0;i < data.data.length;i++){
+                    if (data.data[i].vCode == 'APP'){
+                        var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                        selMenuType.append(opt);
+                    }
+                }
+                selMenuType.val(selMenuType.attr("value"));
+                form.render('select');
+            } else {
+                dmsalert('获取菜单类型列表失败！');
+            }
+        })
+    }
+    function initMenuGroup(){
+        //设置页面的菜单分组列表
+        callAjax("/SPRING-CLOUD-SYS/dict/getDictItemForList",{"vDictCode" : "menu_group"},function (data) {
+            if (data.code == "S") {
+                var selMenuGroup = $("select[name='vMenuGroup']");
+                for (var i = 0;i < data.data.length;i++){
+                    var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                    selMenuGroup.append(opt);
+                }
+                selMenuGroup.val(selMenuGroup.attr("value"));
+                form.render('select');
+            } else {
+                dmsalert('获取菜单分组列表失败！');
+            }
+        })
+    }
+    function initMenuFrom(){
+        //设置页面的菜单来源列表
+        callAjax("/SPRING-CLOUD-SYS/dict/getDictItemForList",{"vDictCode" : "integration_mode"},function (data) {
+            if (data.code == "S") {
+                var selMenuFrom = $("select[name='vFrom']");
+                for (var i = 0;i < data.data.length;i++){
+                    var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                    selMenuFrom.append(opt);
+                }
+                selMenuFrom.val(selMenuFrom.attr("value"));
+                form.render('select');
+            } else {
+                dmsalert('获取菜单来源列表失败！');
+            }
+        })
+    }
+
+    function F_Open_dialog()
+    {
+        $("#btn_file").click();
+    }
+    function imgChange(e) {
+        //取图片对象
+        var file = $("#btn_file")[0].files[0];
+        //取图片位置
+        var path = window.URL.createObjectURL(file);
+        var shows = $("#imgShow")[0];
+        shows.style.display = 'block';
+        shows.style.width = '50px';
+        shows.style.height = '50px';
+        shows.src = path;
+    }
+</script>
+
+</body>
+</html>

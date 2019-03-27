@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head>
+
+<body class="login-bg" onkeydown="kewdown()">
+
+<div class="login">
+    <div class="message">管理登录</div>
+    <div id="darkbannerwrap"></div>
+
+    <form class="layui-form">
+        <input id="usename" name="username" placeholder="用户名" type="text" lay-verify="required" class="layui-input">
+        <input id="password" name="password" lay-verify="required" placeholder="密码" type="password" class="layui-input">
+        <input id="btnLogin" class="loginin" value="登录" lay-submit lay-filter="login" style="width:100%;" type="button" >
+    </form>
+</div>
+
+
+<script>
+    window.onload = function () {
+        if (window.parent.window != window) {
+            window.top.location = "/login-main.action";
+        }
+    }
+    $("#btnLogin").click(function () {
+        if(validForm()) {
+            callAjax("/SPRING-CLOUD-SYS/user/login", {v_user_account: $("#usename").val(), v_user_password: $("#password").val(),v_device_type:"PC"},
+            function (jsonData, status) {
+                if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                	console.log("--->"+JSON.stringify(jsonData))
+                    window.localStorage.setItem("VW.AUTO_USER_JSON", JSON.stringify(jsonData.data));
+                    window.location.href = 'main.html?userid='+jsonData.data.vaccount;
+                } else {
+                    dmsalert(jsonData.msg, "W",function () {
+                        if(window.event.keyCode=="13")
+                        {
+                            dmsalert("11","W");
+                        }
+                    });
+                    document.getElementById("password").value="";
+                }
+            });
+        }
+    });
+
+    function validForm() {
+        var user_name = $("#usename").val();
+        var password = $("#password").val();
+        if (isNullOrEmpty(user_name)) {
+
+            return false;
+        } else if (isNullOrEmpty(password)) {
+            return false;
+        }
+        else {return true;}
+    }
+    function kewdown() {
+        if(window.event.keyCode=="13")
+        {
+           $('#btnLogin').click();
+        }
+        else {
+
+        }
+    }
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+
+<script id="toolbarDemo" type="text/html">
+    <button class="layui-btn layui-btn-sm" onclick="addConstrctionItem()">新增在建经销商</button>
+    搜索经销商：
+    <div class="layui-inline">
+        <input class="layui-input" name="id" id="selectDict" autocomplete="off">
+    </div>
+    <button class="layui-btn layui-btn-sm" onclick="selectConstruction()">搜索</button>
+    <a class="layui-btn layui-btn-sm" href="#" id="a_download">下载Excel模板</a>
+    导入在建经销商数据：
+    <form method="POST" enctype="multipart/form-data" action="/excel/excelUpload" style="display: inline-block;">
+        <div class="layui-inline">
+        <input type="file" id="file" name="file">
+        </div>
+        <div class="layui-inline">
+        <input type="hidden" id="code" name="code" value="002" >
+        </div>
+        <button class="layui-btn layui-btn-sm" id="upload" type="submit">上传</button>
+    </form>
+</script>
+
+<table class="layui-hide" id="ConList" lay-filter="ConList"></table>
+
+<script id="barDemo" type="text/html">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="imgInfo">维护图片</a>
+</script>
+
+
+<script th:inline="none">
+    var columns_show_json;
+    var table = layui.table,
+        form = layui.form;
+
+    columns_show_json = [[
+        {type: 'checkbox'}
+        , {field: 'id', width: 100, title: 'id', sort: true, hide: true}
+        , {field: 'vShortName', width: 200, title: '经销商简称'}
+        , {field: 'vFullName', width: 200, title: '经销商全称'}
+        , {field: 'nCity', width: 200, title: '城市'}
+        , {field: 'vAddress', width: 200, title: '地址'}
+        , {field: 'dLoi', width: 200, title: 'Loi'}
+        , {field: 'dDone', width: 200, title: '完成时间'}
+        , {field: 'vStatus', width: 200, title: '状态'}
+        , {field: 'vCreatorName', width: 200, title: '创建者'}
+        , {field: 'dCreate', width: 200, title: '创建时间'}
+        , {field: 'dUpdate', width: 200, title: '修改时间'}
+        , {field: 'vRemark', width: 100, title: '备注'}
+        , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 230}
+
+    ]];
+
+    $(function () {
+        initPageData();
+        initPageEvent();
+        downLoadTemplate();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData() {
+        var para_json_obj = {
+            layer_table_define_obj: table,
+            layer_table_column_obj: columns_show_json,
+            ajax_url: "/app/construction/list",
+            ajax_json_data: {},
+            dom_table_id: "ConList",
+            dom_bar_id: "toolbarDemo",
+            callback: function (res, curr, count) {
+            }
+        };
+
+        initPageTableData(para_json_obj);
+    }
+
+    /**
+     * 初始化页面事件
+     */
+    function initPageEvent() {
+        //监听表格复选框选择
+        table.on('checkbox(ConList)', function (obj) {
+        });
+
+        //删除 修改
+        table.on('tool(ConList)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('您确定要删除该在建经销商吗？', function (index) {
+                    var ajax_url = '/app/construction/remove';
+                    var jsonDataObj = {id: data.id};
+                    callAjax(ajax_url, jsonDataObj, function deleteDictCB(jsonData, status) {
+                        if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                            obj.del();
+                            dmsalert('删除在建经销商成功!', "S", function () {
+                                window.parent.location.reload();//修改成功后刷新父界面
+                            });
+                        } else {
+                            dmsalert(jsonData.msg, "E");
+                        }
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                WindowsShow('修改在建经销商', '/construction/updatePage?id=' + data.id,  '800', '480');
+            }else if (obj.event === 'imgInfo') {
+                WindowsShow('维护在建经销商', '/construction/imgInfoPage?id=' + data.id,  '800', '480');
+            }
+        });
+    }
+
+    function addConstrctionItem() {
+        WindowsShow('新增在建经销商', '/construction/add', '800', '480');
+    }
+
+    function selectConstruction() {
+        table = layui.table
+        var vFullName = $("#selectDict").val();
+        if (isNullOrEmpty(vFullName)) {
+            window.parent.location.reload();
+        } else {
+            var para_json_obj = {
+                layer_table_define_obj: table,
+                layer_table_column_obj: columns_show_json,
+                ajax_url: "/app/construction/list",
+                ajax_json_data: {vFullName: vFullName},
+                dom_table_id: "ConList",
+                dom_bar_id: "toolbarDemo",
+                callback: function (res, curr, count) {
+                }
+            };
+            initPageTableData(para_json_obj);
+        }
+    }
+    function downLoadTemplate() {
+        var urlStr = "/app/excel/getTemplateURL";
+        var jsonData = {
+            excelCode: "002"
+        };
+        callAjax(urlStr, jsonData, function (data, status) {
+            if (data.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                if (data.data.length > 0) {
+                    document.getElementById("a_download").href = data.data[0].vTemplateUrl;
+                } else {
+                    document.getElementById("a_download").href = "javascript:void(0)";
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+
+<script id="toolbarDemo" type="text/html">
+    <button class="layui-btn layui-btn-sm" onclick="addDealerItem()">新增经销商</button>
+    <button class="layui-btn layui-btn-sm" onclick="deleteDealer()">删除</button>
+    搜索经销商：
+    <div class="layui-inline">
+        <input class="layui-input" name="id" id="selectDealer" autocomplete="off">
+    </div>
+    <button class="layui-btn layui-btn-sm" onclick="selectDealer()">搜索</button>
+
+    <!--<button id="downLoadButton" class="layui-btn layui-btn-sm" onclick="downLoadTemplate()">下载Excel模板</button>-->
+    <div class="layui-inline">
+        <a class="layui-btn layui-btn-sm" href="#" id="a_download">下载Excel模板</a>
+        导入4S经销商数据：
+        <form method="POST" enctype="multipart/form-data" action="/excel/excelUpload" style="display: inline-block;">
+            <div class="layui-inline">
+                <input type="file" id="file" name="file">
+            </div>
+            <div class="layui-inline">
+                <input type="hidden" id="code" name="code" value="003">
+            </div>
+            <button class="layui-btn layui-btn-sm" id="upload" type="submit">上传</button>
+        </form>
+    </div>
+</script>
+
+<table class="layui-hide" id="dealerList" lay-filter="dealerList"></table>
+
+<script id="barDemo" type="text/html">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="uploadImage">上传图片</a>
+</script>
+
+<script type="text/html" id="switchSHCFlag">
+    <input type="checkbox" name="switchSHCFlag" value="{{d.id}}" disabled="disabled" lay-skin="switch"
+           lay-text="已授权|未授权"
+           lay-filter="SHCFlag" {{d.vSHCFlag== 0 ? '' : 'checked' }}>
+</script>
+
+<script type="text/html" id="switchA3ETron">
+    <input type="checkbox" name="A3ETronFlag" value="{{d.id}}" disabled="disabled" lay-skin="switch" lay-text="已授权|未授权"
+           lay-filter="A3ETron" {{d.vA3ETron== 0 ? '' : 'checked' }}>
+</script>
+
+<script type="text/html" id="switchA6ETron">
+    <input type="checkbox" name="A6ETronFlag" value="{{d.id}}" disabled="disabled" lay-skin="switch" lay-text="已授权|未授权"
+           lay-filter="A6ETron" {{d.vA6ETron== 0 ? '' : 'checked' }}>
+</script>
+
+<script type="text/html" id="switchQ7ETron">
+    <input type="checkbox" name="Q7ETronFlag" value="{{d.id}}" disabled="disabled" lay-skin="switch" lay-text="已授权|未授权"
+           lay-filter="Q7ETron" {{d.vQ7ETron== 0 ? '' : 'checked' }}>
+</script>
+
+<!--<script type="text/html" id="switchSport">-->
+<!--<input type="checkbox" name="SportFlag" value="{{d.id}}" disabled="disabled" lay-skin="switch" lay-text="已授权|未授权"-->
+<!--lay-filter="Sport" {{d.vSportETron== 0 ? '' : 'checked' }}>-->
+<!--</script>-->
+
+<script th:inline="none">
+    var table = layui.table,
+        form = layui.form;
+    var columns_show_json;
+
+    columns_show_json = [[
+        {type: 'checkbox'}
+        , {field: 'id', width: 100, title: 'id', sort: true, hide: true}
+        , {field: 'vBrand', width: 100, title: '品牌', sort: true}
+        , {field: 'vCode', width: 150, title: '经销商代码', sort: true}
+        , {field: 'vFullName', width: 250, title: '经销商全称', sort: true}
+        , {field: 'vShortName', width: 120, title: '经销商简称', sort: true}
+        , {field: 'vInvestor', width: 120, title: '控股投资人', sort: true}
+        , {field: 'dOpening', width: 150, title: '正式开业时间', sort: true}
+        , {field: 'vArea', width: 120, title: '大区', sort: true}
+        , {field: 'vProvince', width: 120, title: '省份', sort: true}
+        , {field: 'vCity', width: 120, title: '城市', sort: true}
+        , {field: 'vBranchType', width: 100, title: '4S店类型', sort: true}
+        , {field: 'vBranchNetType', width: 100, title: '网络类型', sort: true}
+        , {field: 'vBranchStatus', width: 120, title: '经销商状态', sort: true}
+        , {field: 'vDevelopmentLevel', width: 120, title: '发展级形式', sort: true}
+        , {field: 'vAdress', width: 200, title: '地址', sort: true}
+        , {field: 'nLongitude', width: 100, title: '经度', sort: true}
+        , {field: 'nLatitude', width: 100, title: '纬度', sort: true}
+        , {field: 'vSalTel', width: 150, title: '销售电话', sort: true}
+        , {field: 'vSvcTel', width: 150, title: '服务电话', sort: true}
+        , {field: 'nDisplayCount', width: 120, title: '新车展位数', sort: true}
+        , {field: 'vSHCFlag', width: 120, title: '二手车授权', templet: '#switchSHCFlag', unresize: true}
+        , {field: 'dSHCAuth', width: 180, title: '二手车授权时间', sort: true}
+        , {field: 'vA3ETron', width: 110, title: 'A3授权', templet: '#switchA3ETron', unresize: true}
+        , {field: 'vA6ETron', width: 110, title: 'A6授权', templet: '#switchA6ETron', unresize: true}
+        , {field: 'vQ7ETron', width: 110, title: 'Q7授权', templet: '#switchQ7ETron', unresize: true}
+        , {field: 'vSportETron', width: 110, title: 'Sport授权'}
+        , {field: 'vCreatorName', width: 100, title: '创建者'}
+        , {field: 'dCreate', width: 180, title: '创建时间'}
+        , {field: 'dUpdate', width: 180, title: '修改时间'}
+        , {field: 'vRemark', width: 100, title: '备注'}
+        , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 180}
+    ]];
+
+    $(function () {
+        initPageData();
+        initPageEvent();
+        downLoadTemplate();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData() {
+        var para_json_obj = {
+            layer_table_define_obj: table,
+            layer_table_column_obj: columns_show_json,
+            ajax_url: "/app/dealer/list",
+            ajax_json_data: {},
+            dom_table_id: "dealerList",
+            dom_bar_id: "toolbarDemo",
+            callback: function (res, curr, count) {
+            }
+        };
+
+        initPageTableData(para_json_obj);
+    }
+
+    function initPageEvent() {
+
+        //监听表格复选框选择
+        table.on('checkbox(dealerList)', function (obj) {
+        });
+
+        //删除 修改
+        table.on('tool(dealerList)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('您确定要删除该条经销商信息？', function (index) {
+                    var ajax_url = '/app/dealer/remove';
+                    var jsonDataObj = {id: data.id};
+                    callAjax(ajax_url, jsonDataObj, function deleteDealerCB(jsonData, status) {
+                        if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                            obj.del();
+                            dmsalert('作废经销商数据成功!', "S", function () {
+                                window.parent.location.reload();//修改成功后刷新父界面
+                            });
+                        } else {
+                            dmsalert(jsonData.msg, "E");
+                        }
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                WindowsShow('修改经销商信息', '/dealer/editDealerPage?id=' + data.id, '400', '400');
+            }else if (obj.event === 'uploadImage') {
+                WindowsShow('上传经销商图片', '/dealer/uploadImagePage?id=' + data.id,  '400', '400');
+            }
+        });
+    }
+
+    //新增经销商信息
+    function addDealerItem() {
+        WindowsShow('新增经销商信息', '/dealer/addDealerPage', '400', '400');
+    }
+
+    //批量删除
+    function deleteDealer() {
+        table = layui.table
+        //获取选中数据
+        var checkStatus = table.checkStatus('dealerList')
+            , data = checkStatus.data;
+        var urlStr = "/app/dealer/deleteCheckedItem";
+        var jsonData = {
+            checkedItem: data
+        };
+        if (data.length > 0) {
+            layer.confirm('您确定要删除选中的经销商？', function (index) {
+                callAjax(urlStr, jsonData, function (data, status) {
+                    if (data.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                        dmsalert('作废经销商数据成功!', "S", function () {
+                            window.parent.location.reload();//修改成功后刷新父界面
+                        });
+                    } else {
+                        dmsalert(data.msg, "E"); //alert warning
+                    }
+                });
+            });
+        } else {
+            dmstoast('请先选择要删除的经销商!', "W");
+        }
+        return false;
+    }
+
+    //按名称、代码查询经销商
+    function selectDealer() {
+        table = layui.table
+        var dealerValue = $("#selectDealer").val();
+        if (isNullOrEmpty(dealerValue)) {
+            window.parent.location.reload();//修改成功后刷新父界面
+        } else {
+            var para_json_obj = {
+                layer_table_define_obj: table,
+                layer_table_column_obj: columns_show_json,
+                ajax_url: "/app/dealer/getDealerItemsBySearch",
+                ajax_json_data: {
+                    vDealerSearch: dealerValue
+                },
+                dom_table_id: "dealerList",
+                dom_bar_id: "toolbarDemo",
+                callback: function (res, curr, count) {
+                }
+            };
+            initPageTableData(para_json_obj);
+        }
+    }
+
+    function downLoadTemplate() {
+        var urlStr = "/app/excel/getTemplateURL";
+        var jsonData = {
+            excelCode: "003"
+        };
+        callAjax(urlStr, jsonData, function (data, status) {
+            if (data.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                if (data.data.length > 0) {
+                    document.getElementById("a_download").href = data.data[0].vTemplateUrl;
+                } else {
+                    document.getElementById("a_download").href = "javascript:void(0)";
+                }
+            }
+        })
+    }
+
+</script>
+</body>
+</html>

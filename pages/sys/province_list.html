@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>province list page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+
+<body>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-normal" onclick="onAdd()">添加省份</button>
+    </div>
+</script>
+<table class="layui-hide" id="province_table" lay-filter="test"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+</script>
+
+<script type="text/html" id="switchTpl">
+    <!-- 这里的 checked 的状态只是演示 -->
+    <input type="checkbox" name="sex" value="{{d.vStopFlag}}" lay-skin="switch" lay-text="未停用|已停用"
+           lay-filter="stop" {{ d.vStopFlag== 0 ? 'checked' : '' }} disabled="true">
+</script>
+
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script th:inline="none">
+    var table = layui.table;
+    var columns_show_json =[[
+        {type:'radio'}
+        ,{field: 'id', width: 100, title: 'id', sort: true, hide: true}
+        ,{field:'vAreaCode', width:200, title: '区域代码', hide: true}
+        ,{field:'vAreaDesc', width:100, title: '区域描述'}
+        ,{field:'vProCode', width:200, title: '省份代码', sort: true}
+        ,{field:'vProName', width:150, title: '省份名称', sort: true}
+        ,{field:'vProFixer', width:100, title: '省份前缀', sort: true}
+        ,{field:'vCreatorName', width:100, title: '创建者'}
+        ,{field:'dCreate', width:100, title: '创建时间'}
+        ,{fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+
+    ]];
+
+    $(function () {
+        initPageData();
+        initPageEvent();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData()
+    {
+        var para_json_obj  = {
+            layer_table_define_obj:table,
+            layer_table_column_obj:columns_show_json,
+            ajax_url:"/SPRING-CLOUD-SYS/province/getprovincebycodeorname",
+            ajax_json_data:{searchStr:''},
+            dom_table_id:"province_table",
+            dom_bar_id:"toolbarDemo",
+            callback:function(res, curr, count){
+            }
+        };
+        initPageTableData(para_json_obj);
+    }
+
+    /**
+     * 增加省份事件
+     */
+    function onAdd() {
+        WindowsShow('添加身份色','province_add.html','600','500');
+    }
+
+    /**
+     * 初始化页面事件
+     */
+    function initPageEvent()
+    {
+        //删除 修改
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+
+            if (obj.event === 'del') {
+                layer.confirm('真的要删除当前省份数据信息吗？', function (index) {
+                    callAjax("/SPRING-CLOUD-SYS/province/remove",{id: data.id},function (data) {
+                        if (data.code == "S") {
+                            dmsalert('删除省份信息成功！',"S",function () {
+                                obj.del();
+                                layer.close(index);
+                            });
+                        } else {
+                            dmsalert(data.msg,"E");
+                        }
+                    })
+                });
+            } else if (obj.event === 'edit') {
+                WindowsShow('编辑身份','province_update.html?v_province_code='+data.vProCode,600,500);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

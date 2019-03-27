@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form" id="leavel2_action" lay-filter="fromUpdate"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+<div class="layui-form-item proSelect layui-must-field">
+    <label class="layui-form-label"><span>经销商名称</span></label>
+    <div class="layui-input-block editWidth">
+        <select name="vCode" lay-verify="required" id="vCode" class="vCode" lay-filter="business" lay-search>
+
+        </select>
+    </div>
+</div>
+
+
+<div class="layui-form-item layui-must-field">
+    <label class="layui-form-label"><span>发展级别</span></label>
+    <div class="layui-input-block">
+        <select name="vShcLevel" lay-verify="required" id="vShcLevel" class="vShcLevel" lay-filter="business">
+        </select>
+        <!--<input type="text"  name="vShcLevel" placeholder="请输入" lay-verify="required" autocomplete="off" class="layui-input"  value="">-->
+    </div>
+</div>
+
+
+
+<div class="layui-form-item">
+    <label class="layui-form-label">建筑类型</label>
+    <div class="layui-input-block">
+        <input type="text" name="vBuiLdingStyle" placeholder="请输入" autocomplete="off" class="layui-input"  value="">
+    </div>
+</div>
+
+<div class="layui-form-item">
+    <label class="layui-form-label"><span>展厅类型</span></label>
+    <div class="layui-input-block">
+        <select name="vDisplayStyle" lay-verify="required" id="vDisplayStyle" class="vDisplayStyle" lay-filter="business">
+        </select>
+        <!--<input type="text" name="vDisplayStyle" placeholder="请输入" autocomplete="off" class="layui-input"  value="">-->
+    </div>
+</div>
+
+<div class="layui-form-item">
+    <label class="layui-form-label">室内展位</label>
+    <div class="layui-input-block">
+        <input type="number" name="nInBooths" placeholder="请输入"  autocomplete="off" class="layui-input"  value="">
+    </div>
+</div>
+
+<div class="layui-form-item">
+    <label class="layui-form-label">室外展位</label>
+    <div class="layui-input-block">
+        <input type="number" name="nOutBooths" placeholder="请输入"  autocomplete="off" class="layui-input"  value="">
+    </div>
+</div>
+
+<div class="layui-form-item">
+    <label class="layui-form-label"><span>升发展级日期</span></label>
+    <div class="layui-input-block">
+        <input type="text" name="dDevelop" id="dDevelop" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input"  value="">
+    </div>
+</div>
+<div class="layui-form-item">
+        <label class="layui-form-label"><span>退网日期</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="dOutAuth" id="dOutAuth" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input"  value="">
+        </div>
+ </div>
+
+<div class="layui-form-item">
+    <label class="layui-form-label">备注</label>
+    <div class="layui-input-block">
+        <input type="text" name="vRemark" placeholder="请输入" autocomplete="off" class="layui-input"  value="">
+    </div>
+</div>
+
+<div class="layui-form-item">
+    <div class="layui-input-block">
+        <button class="layui-btn" lay-submit lay-filter="fromAdd" type="submit">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+</div>
+</form>
+
+<script>
+
+    var form = layui.form
+        , laydate = layui.laydate;
+    var userInfo = getUserInfo();
+    var vAreaCode = '',
+        vProCode = '';
+    laydate.render({
+        elem:'#dOutAuth'
+    });
+    laydate.render({
+        elem:'#dDevelop'
+    });
+
+    $(function () {
+        initPageData();
+        initPageEvent();
+    });
+
+    //layui.use('form', function(){
+    function initPageData(){
+        var form = layui.form;
+        var canshu={
+            'vSHCFlag':'1'
+        };
+        callAjax("/app/dealer/getDealerlistForSHC",canshu,attachmentConfigLevel1listCB,1,999);
+        function attachmentConfigLevel1listCB(jsonData,Status)
+        {
+            if(jsonData.code=='S')
+            {
+                $('#vCode').empty();
+                var form = layui.form;
+                var str="";
+                for(var i=0;i<jsonData.data.length;i++)
+                {
+                    str+='<option value="'+jsonData.data[i].vCode+'">'+jsonData.data[i].vFullName +'</option>';
+                }
+                $('.vCode').append(str);
+                form.render();
+                if(jsonData.data.length==0)
+                {
+                    dmsalert("暂无可新增二手车业务经销商","W",function(){
+                    window.parent.location.reload();
+                });
+
+                }
+            }else{
+
+            }
+        }
+        var canshu1={
+            'vDictCode':'SHC_Level'
+        }
+        callAjax("/app/dict/getDictItemForList",canshu1,getDictItemsByCodeCB);
+        function getDictItemsByCodeCB(jsonData,Status) {
+            if(jsonData.code=='S')
+            {
+                $('#vShcLevel').empty();
+                var form = layui.form;
+                var str="";
+                for(var i=0;i<jsonData.data.length;i++)
+                {
+                    str+='<option value="'+jsonData.data[i].vCode+'">'+jsonData.data[i].vDesc +'</option>';
+                }
+                $('.vShcLevel').append(str);
+                form.render();
+            }else{
+
+            }
+        }
+        var canshu2={
+            'vDictCode':'display_style'
+        }
+        callAjax("/app/dict/getDictItemForList",canshu2,getDictItemsByCodeCB1);
+        function getDictItemsByCodeCB1(jsonData,Status) {
+            if(jsonData.code=='S')
+            {
+                $('#vDisplayStyle').empty();
+                var form = layui.form;
+                var str="";
+                for(var i=0;i<jsonData.data.length;i++)
+                {
+                    str+='<option value="'+jsonData.data[i].vCode+'">'+jsonData.data[i].vDesc +'</option>';
+                }
+                $('.vDisplayStyle').append(str);
+                form.render();
+            }else{
+
+            }
+        }
+    }
+    function initPageEvent(){
+            form.on('submit(fromAdd)', function (data) {
+
+                callAjax("/app/dealerShc/save", data.field, function (jsonData, Status) {
+                    if (jsonData.code == 'S') {
+                        dmstoast("添加成功","W");
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index);
+                        window.parent.location.reload();//修改成功后刷新父界面
+                    } else {
+                        dmstoast("添加失败","W");
+                    }
+                }, 0);
+
+
+                return false;
+            });
+    }
+    //});
+
+</script>
+
+</body>
+</html>

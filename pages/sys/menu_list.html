@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+	<meta charset="utf-8">
+	<!--CSS-->
+	<link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+	<link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+	  
+	<script> 
+	    document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+	    document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+	</script>
+</head>
+<body>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-normal" onclick="onAdd()">添加菜单</button>
+    </div>
+</script>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+</script>
+
+<script type="text/html" id="switchTpl">
+    <!-- 这里的 checked 的状态只是演示 -->
+    <input type="checkbox" name="useFlag" disabled="disabled" value="{{d.vStopFlag}}" lay-skin="switch" lay-text="未停用|已停用" lay-filter="stop" {{d.vStopFlag == '0' ? 'checked' : '' }}>
+</script>
+
+<script type="text/html" id="imgTpl">
+    <!-- 图片选择控件 -->
+    <div>
+        <input type="file" id="btn_file" style="display:none">
+        <img id="imgShow" src="{{d.vFileUrl}}" style="width: 36px;height: 36px">
+    </div>
+</script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script th:inline="none">
+        var table = layui.table, form = layui.form;
+        var columns_show_json=[[
+            {type:'radio'}
+            ,{field:'id', width:100, title: 'id', hide: true}
+            ,{field:'vMenuType', width:100, title: '菜单类型', hide: true}
+            ,{field:'vMenuTypeName', width:130, title: '菜单类型', sort: true}
+            ,{field:'vMenuGroupDesc', width:100, title: '菜单分组', sort: true}
+            ,{field:'vMenuGroup', width:100, title: '菜单分组id', hide: true}
+            ,{field:'vMenuCode', width:150, title: '菜单代码', sort: true}
+            ,{field:'vMenuDesc', width:150, title: '菜单描述', sort: true}
+            ,{field: 'picture', title: '菜单图标', width: 100,templet:'#imgTpl',unresize: true}
+            ,{field:'vInstruction', width:100, title: '菜单动作', sort: true}
+            ,{field:'vCssCode', width:100, title: '菜单样式', sort: true}
+            ,{field: 'vStopFlag', width: 120, title: '停用标识', templet: '#switchTpl', unresize: true}
+            ,{field:'vFrom', width:100, title: '菜单来源', sort: true}
+            ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+        ]]
+
+        $(function () {
+            initTableData();
+            initPageEvent();
+        });
+        function initTableData(){
+            var para_json_obj = {
+                layer_table_define_obj: table,
+                layer_table_column_obj: columns_show_json,
+                ajax_url: "/SPRING-CLOUD-SYS/menu/list",
+                ajax_json_data: {},
+                dom_table_id: "test",
+                dom_bar_id: "toolbarDemo",
+                callback: function (res, curr, count) {
+                }
+            };
+            initPageTableData(para_json_obj);
+        }
+
+        function initPageEvent(){
+            //删除 修改
+            table.on('tool(test)', function (obj) {
+                var data = obj.data;
+                console.log(JSON.stringify(data));
+                if (obj.event === 'del') {
+                    layer.confirm('真的删除行么', function (index) {
+                        callAjax("/SPRING-CLOUD-SYS/menu/remove",{id: data.id},function (data) {
+                            if (data.code == "S") {
+                                dmsalert(data.msg,"S",function () {
+                                    obj.del();
+                                    layer.close(index);
+                                });
+                            } else {
+                                dmsalert(data.msg,"W");
+                            }
+                        })
+                    });
+                } else if (obj.event === 'edit') {
+                    WindowsShow('编辑菜单','menu_update.html?vMenuCode='+data.vMenuCode,'600','560');
+                }
+            });
+        }
+        function onAdd() {
+            WindowsShow('新增菜单','menu_add.html','500','500');
+        }
+</script>
+</body>
+</html>

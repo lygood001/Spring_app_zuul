@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>terminolog add page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form" lay-filter="fromAdd"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+
+    <div class="layui-form-item">
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属模块</label>
+            <div class="layui-input-block">
+                <select name="select_model" lay-filter="select_model">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">中文名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="vChFullName" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">中文描述</label>
+        <div class="layui-input-block">
+            <input type="text" name="vChDesc" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">英文全称</label>
+        <div class="layui-input-block">
+            <input type="text" name="vEnFullName" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">英文简称</label>
+        <div class="layui-input-block">
+            <input type="text" name="vEnShortName" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">概念外延</label>
+        <div class="layui-input-block">
+            <input type="text" name="vExtension" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">拼音缩写</label>
+        <div class="layui-input-block">
+            <input type="text" name="vSpellWords" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <input type="text" name="vRemark" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建者</label>
+        <div class="layui-input-block">
+            <input type="text" id="txt_vCreateName" autocomplete="off" readonly="readonly" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建时间</label>
+        <div class="layui-input-block">
+            <input type="text"  id="txt_dCreateDate" name="vCreateDate" autocomplete="off" readonly="readonly" class="layui-input">
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="sub_btn">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+    <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<script>
+
+    var form = layui.form;
+    var userInfo = getUserInfo();
+    $(function () {
+        initPageData();
+        initPageEvent();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData()
+    {
+        initModelSelect();
+        $("#txt_vCreateName").val(userInfo.vrealName);
+        $("#txt_dCreateDate").val(getDateFormatYYYY_MM_DD(new Date()));
+
+    }
+
+    /**
+     * 初始化事件
+     */
+    function initPageEvent()
+    {
+        //form提交事件
+        form.on('submit(sub_btn)', function(data){
+            var post_data ={};
+            post_data.vModule = data.field.select_model;
+            post_data.vChFullName = data.field.vChFullName;
+            post_data.vEnFullName = data.field.vEnFullName;
+            post_data.vExtension = data.field.vExtension;
+            post_data.vEnShortName = data.field.vEnShortName;
+            post_data.vChDesc = data.field.vChDesc;
+            post_data.vSpellWords = data.field.vSpellWords;
+            post_data.vRemark = data.field.vRemark;
+            post_data.nCreator = userInfo.id;
+
+            var url="/SPRING-CLOUD-SYS/terminology/save";
+            callAjax(url,post_data,function (jsonData,status) {
+                if (jsonData.code =="S" && status == dms_boot_config.CALL_URL_OK) {
+                    dmsalert('保存名词术语信息成功!','S',function(){
+                        window.parent.location.reload();//修改成功后刷新父界面
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                }else{
+                    dmsalert(jsonData.msg, "W");
+                }
+            });
+            return false;
+        });
+    }
+
+    /**
+     *
+     * 初始所属模块数据
+     */
+    function initModelSelect()
+    {
+        //设置页面的所属模块来源列表
+        callAjax("/SPRING-CLOUD-SYS/dict/getDictItemForList",{"vDictCode" : "sys_model"},function (data,status) {
+            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                var select_area_obj = $("select[name='select_model']");
+                for (var i = 0; i < data.data.length; i++) {
+                    var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                    select_area_obj.append(opt);
+                }
+                form.render('select');
+            } else {
+                dmsalert(data.msg,"W");
+            }
+        });
+
+
+    }
+
+</script>
+</body>
+</html>

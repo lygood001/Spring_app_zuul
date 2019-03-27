@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dictionary edit page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form method="post" id="data_form" class="layui-form" lay-filter="fromUpdate">
+    <input id="id" name="id" type="hidden" v-model:value="dict_data.id">
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>字典主代码</span></label>
+        <div class="layui-input-block">
+            <input id="inp_mainCode" type="text" readonly="readonly" name="vMainCode" placeholder="请输入字典主代码"
+                   autocomplete="off" class="layui-input" v-model:value="dict_data.vmainCode">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>字典主名称</span></label>
+        <div class="layui-input-block">
+            <input id="inp_mainName" type="text" readonly="readonly" name="vMainName" placeholder="请输入字典主名称"
+                   autocomplete="off" class="layui-input" v-model:value="dict_data.vmainName">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>字典子代码</span></label>
+        <div class="layui-input-block">
+            <input id="inp_code" type="text" readonly="readonly" name="vCode" placeholder="请输入字典子代码" autocomplete="off"
+                   class="layui-input"
+                   v-model:value="dict_data.vcode">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>字典子名称</span></label>
+        <div class="layui-input-block">
+            <input id="inp_desc" type="text" name="vDesc" placeholder="请输入字典主名称" autocomplete="off" class="layui-input"
+                   v-model:value="dict_data.vdesc">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>排序键</span></label>
+        <div class="layui-input-block">
+            <input id="inp_sort" type="number" name="nSort" placeholder="请输入排序建" autocomplete="off" class="layui-input"
+                   v-model:value="dict_data.nsort" lay-verify="number">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <input id="inp_remark" type="text" name="vRemark" placeholder="请输入备注" autocomplete="off" class="layui-input"
+                   v-model:value="dict_data.vremark">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建者</label>
+        <div class="layui-input-block">
+            <input type="text" id="inp_vCreateName" autocomplete="off" readonly="readonly" class="layui-input"
+                   v-model:value="dict_data.vcreatorName">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建时间</label>
+        <div class="layui-input-block">
+            <input type="text" id="inp_dCreateDate" name="vCreateDate" autocomplete="off" readonly="readonly"
+                   class="layui-input" v-model:value="dict_data.dcreate">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否停用</label>
+        <div class="layui-input-block">
+            <input id="inp_stopFlag" name="vStopFlag" type="checkbox" lay-skin="switch"
+                   v-bind:value="dict_data.vstopFlag" :checked="dict_data.vstopFlag=='0'?'ture':'false'" lay-text="未停用|已停用"
+                   lay-filter="stop">
+        </div>
+    </div>
+    
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button id="btn_submit" class="layui-btn" lay-submit lay-filter="updateDict">立即提交</button>
+            <button id="btn_reset" type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    var form = layui.form;
+    form.val("formUpdate",{});
+
+    var vm = new Vue({
+     	el:"#data_form",
+     	data:
+     	{
+			dict_data: {},
+     	}
+     }); 
+     
+     
+    $(function () {
+    	initPageData(); 
+    });
+    
+     /**
+     * 初始化列表数据
+     */
+    function initPageData() {
+        var url="/SPRING-CLOUD-SYS/dict/getDictDetailById"; 
+        callAjax(url,{id:getURLParameter("id")||0},function (jsonData,status) {
+            if (jsonData.code =="S" && status == dms_boot_config.CALL_URL_OK) {
+            	 console.log(JSON.stringify(jsonData.data));
+                 vm.dict_data = jsonData.data;
+        		 initPageEvent();
+             
+            }else{
+                dmsalert(jsonData.msg, "E");
+            }
+        });
+    }
+
+
+    /**
+	 * 初始化页面事件
+	 */
+    function initPageEvent() {
+        form.on('submit(*)', function (data) {
+            callAjax("/SPRING-AUDI-NET/brand/update", data.field, function (jsonData, CALL_URL_OK) {
+                if (CALL_URL_OK == 1 && jsonData.code == "S") {
+                    dmsalert("修改品牌成功!", "S",function () {
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭
+                        window.parent.location.reload();
+                    });
+                } else {
+                    dmsalert("修改品牌失败!", "E");
+                }
+
+            }, 0)
+            return false;
+        });
+    }
+
+</script>
+</body>
+</html>

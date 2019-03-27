@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel import page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+
+<script id="toolbarDemo" type="text/html">
+    <button class="layui-btn layui-btn-sm" onclick="addExcelItem()">新增配置</button>
+    <span style="color: red;"> Excel模板仅支持.xlsx类型文件</span>
+</script>
+
+<table class="layui-hide" id="excelList" lay-filter="excelList"></table>
+
+<script id="barDemo" type="text/html">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+</script>
+
+<script type="text/html" id="switchStop">
+    <!-- 这里的 checked 的状态只是演示 -->
+    <input type="checkbox" name="stopFlag" value="{{d.id}}" disabled="disabled" lay-skin="switch" lay-text="未停用|已停用"
+           lay-filter="stop" {{d.vStopFlag== 0 ? 'checked' : '' }}>
+</script>
+
+<script th:inline="none">
+    var columns_show_json;
+        var table = layui.table,
+            form = layui.form;
+        columns_show_json = [[
+            {type: 'checkbox'}
+            , {field: 'id', width: 100, title: 'id', sort: true, hide: true}
+            , {field: 'vExcelCode', width: 200, title: '导入配置代码', sort: true}
+            , {field: 'vExcelName', width: 200, title: '导入配置描述', sort: true}
+            , {field: 'vExcelTable', width: 200, title: '数据处理中间表', sort: true}
+            , {field: 'vProc', width: 200, title: '后置处理存储过程', sort: true}
+            , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+        ]];
+
+        var para_json_obj = {
+            layer_table_define_obj: table,
+            layer_table_column_obj: columns_show_json,
+            ajax_url: "/SPRING-CLOUD-BASE/excel/list",
+            ajax_json_data: {},
+            dom_table_id: "excelList",
+            dom_bar_id: "toolbarDemo",
+            callback: function (res, curr, count) {
+            }
+        };
+
+        initPageTableData(para_json_obj);
+
+        //监听表格复选框选择
+        table.on('checkbox(excelList)', function (obj) {
+            console.log(obj.data);
+        });
+
+        //删除 修改
+        table.on('tool(excelList)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('您确定要删除该条数据？', function (index) {
+                    var ajax_url = '/SPRING-CLOUD-BASE/excel/remake';
+                    var jsonDataObj = {id: data.id};
+                    callAjax(ajax_url, jsonDataObj, function deleteDictCB(jsonData, status) {
+                        if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+
+                            dmsalert('删除该配置成功!', "S", function () {
+                                window.parent.location.reload();//修改成功后刷新父界面
+                            });
+                        } else {
+                            dmsalert('删除该配置失败!', "E");
+                        }
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                WindowsShow('修改 EXCEL导入配置','excel_edit.html?id='+ data.id,'600','600');
+            }
+        });
+
+    function addExcelItem() {
+        WindowsShow('新增EXCEL导入配置','excel_add.html','600','600');
+    }
+
+
+</script>
+</body>
+</html>

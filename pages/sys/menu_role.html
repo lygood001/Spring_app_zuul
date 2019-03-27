@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui-xtree/layui-xtree.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+        
+    </script>
+
+</head> 
+<title></title>
+
+<body>
+        <form class="layui-form" lay-filter="menuAdd">
+            <input type="hidden" id="dataId" value="">
+            <div class="layui-form-item">
+                <div id="xtree1" class="xtree_contianer"></div>
+            </div>
+                <div class="layui-form-item" style="display: none" id="div_btn">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">保存</button>
+                    </div>
+                </div>
+        </form>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script type="text/javascript">
+    layui.use(['form'], function () {
+        var xtree1="";
+        var form = layui.form;
+        setTimeout(function () {
+            var url="/SPRING-CLOUD-SYS/menu/getMenuTree";
+            console.log($("#dataId").val());
+            var data={id :$("#dataId").val()};
+
+            callAjax(url,data,function (jsonData ,status) {
+                if(jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK){
+                    console.log(jsonData.data);
+                    xtree1 = new layuiXtree({
+                        elem: 'xtree1'   //(必填) 放置xtree的容器，样式参照 .xtree_contianer
+                        , form: form     //(必填) layui 的 from
+                        , data: transData(jsonData.data, 'value', 'pid', 'data')     //(必填) json数据
+                    });
+                    console.log($("#dataId").val());
+                    $("#div_btn").css("display","");
+                }else{
+                    dmsalert(jsonData.msg, "W");
+                }
+            });
+        },100);
+
+        form.val("menuAdd", {});
+        form.on('submit(formDemo)', function(data){
+            var oCks =  new Array();
+            $.each( $('.layui-form-checked'),function () {
+                oCks.push(this.previousSibling);
+            });
+            console.log(oCks);
+            var idArray = new Array();
+            var rId=$("#dataId").val();
+            for (var i = 0; i < oCks.length; i++) {
+                console.log(oCks[i].value);
+                idArray.push({menuId:oCks[i].value , roleId :rId, roleMenuType:"PC"});
+            }
+            var url = "/SPRING-CLOUD-SYS/RoleMenu/save";
+            var data="";
+            var data={
+                roleMenuType : "PC",
+                roleId : $("#dataId").val(),
+                menuIds : idArray
+            };
+            callAjax(url,data,function (jsonData,status) {
+                if(jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK){
+                    dmsalert('保存成功','S',function(){
+                        window.parent.location.reload();
+                        var index = parent.layer.getFrameIndex( window.name);
+                        parent.layer.close(index);
+                    });
+                }else{
+                    dmsalert(jsonData.msg, "W");
+                }
+            });
+
+            return false;
+        });
+    });
+
+    function transData(a, idStr, pidStr, chindrenStr) {
+        var r = [], hash = {}, id = idStr, pid = pidStr, children = chindrenStr, i = 0, j = 0, len = a.length;
+        for (; i < len; i++) {
+            hash[a[i][id]] = a[i];
+        }
+        for (; j < len; j++) {
+            var aVal = a[j], hashVP = hash[aVal[pid]];
+            console.log(aVal);
+            if (hashVP) {
+                !hashVP[children] && (hashVP[children] = []);
+                hashVP[children].push(aVal);
+            } else {
+                r.push(aVal);
+            }
+        }
+        return r;
+    }
+
+
+</script>
+
+</body>
+</html>

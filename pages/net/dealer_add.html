@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+</head>
+
+<body>
+<form method="post" class="layui-form" id="addDealerItem" lay-filter="from_add">
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>品牌名称</span></label>
+            <div class="layui-input-block">
+                <select name="select_brand" lay-filter="select_brand" lay-verify="required">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>经销商代码</span></label>
+        <div class="layui-input-block">
+            <input id="vCode" type="text" name="vCode" lay-verify="required" placeholder="请输入经销商代码" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>经销商全称</span></label>
+        <div class="layui-input-block">
+            <input id="vFullName" type="text" name="vFullName" lay-verify="required" placeholder="请输入经销商全称"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">经销商简称</label>
+        <div class="layui-input-block">
+            <input id="vShortName" type="text" name="vShortName" placeholder="请输入经销商简称" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>名称首字母</span></label>
+        <div class="layui-input-block">
+            <input id="vProfixer" type="text" name="vProfixer" lay-verify="required" placeholder="请输入经销商名称首字母"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>控股投资人</span></label>
+        <div class="layui-input-block">
+            <input id="vInvestor" type="text" name="vInvestor" lay-verify="required" placeholder="请输入控股投资人"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>开业时间</span></label>
+        <div class="layui-input-block">
+            <input id="dOpening" type="text" name="dOpening" lay-verify="required" placeholder="请选择开业时间"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>大区</span></label>
+            <div class="layui-input-block">
+                <select name="selectArea" lay-filter="selectArea">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>省份</span></label>
+            <div class="layui-input-block">
+                <select id="selectProvince" name="selectProvince" lay-filter="selectProvince">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>城市</span></label>
+            <div class="layui-input-block">
+                <select id="selectCity" name="selectCity" lay-filter="selectCity">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-form-item">
+            <label class="layui-form-label">4S店类型</label>
+            <div class="layui-input-block">
+                <select name="branchType" lay-filter="branchType">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-form-item">
+            <label class="layui-form-label">网络类型</label>
+            <div class="layui-input-block">
+                <select name="branchNetType" lay-filter="branchNetType">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-form-item">
+            <label class="layui-form-label">经销商状态</label>
+            <div class="layui-input-block">
+                <select name="branchStatus" lay-filter="branchStatus">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-form-item">
+            <label class="layui-form-label">发展级形式</label>
+            <div class="layui-input-block">
+                <select name="developmentLevel" lay-filter="developmentLevel">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-block">
+            <input id="vAdress" type="text" name="vAdress" placeholder="请输入经销商地址" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span>经度</span></label>
+        <div class="layui-input-block">
+            <input id="nLongitude" type="number" name="nLongitude" placeholder="请输入经销商经度" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span>纬度</span></label>
+        <div class="layui-input-block">
+            <input id="nLatitude" type="number" name="nLatitude" placeholder="请输入经销商纬度" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">销售电话</label>
+        <div class="layui-input-block">
+            <input id="vSalTel" type="tel" name="vSalTel" placeholder="请输入销售电话" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">服务电话</label>
+        <div class="layui-input-block">
+            <input id="vSvcTel" type="tel" name="vSvcTel" placeholder="请输入服务电话" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">新车展位数</label>
+        <div class="layui-input-block">
+            <input id="nDisplayCount" type="number" name="nDisplayCount" placeholder="请输入新车展位数" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">二手车授权</label>
+        <div class="layui-input-block">
+            <input id="vSHCFlag" type="checkbox" name="vSHCFlag" value="0" lay-skin="switch" lay-text="已授权|未授权"
+                   lay-filter="v_SHC_Flag">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">授权时间</label>
+        <div class="layui-input-block">
+            <input id="dSHCAuth" type="text" name="dSHCAuth" placeholder="请选择二手车授权时间"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">A3 授权</label>
+        <div class="layui-input-block">
+            <input id="vA3ETron" type="checkbox" name="vA3ETron" value="0" lay-skin="switch" lay-text="已授权|未授权"
+                   lay-filter="a3AuthFlag">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">A6 授权</label>
+        <div class="layui-input-block">
+            <input id="vA6ETron" type="checkbox" name="vA6ETron" value="0" lay-skin="switch" lay-text="已授权|未授权"
+                   lay-filter="a6AuthFlag">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">Q7 授权</label>
+        <div class="layui-input-block">
+            <input id="vQ7ETron" type="checkbox" name="vQ7ETron" value="0" lay-skin="switch" lay-text="已授权|未授权"
+                   lay-filter="q7AuthFlag">
+        </div>
+    </div>
+
+    <!--<div class="layui-form-item">-->
+        <!--<label class="layui-form-label">Sport授权</label>-->
+        <!--<div class="layui-input-block">-->
+            <!--<input id="vSportETron" type="checkbox" name="vSportETron" value="0" lay-skin="switch" lay-text="已授权|未授权"-->
+                   <!--lay-filter="sportAuthFlag">-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">Sport授权</label>
+        <div class="layui-input-block">
+            <input id="vSportETron" type="text" name="vSportETron" placeholder="请输入Audi Sport授权" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <input id="vRemark" type="text" name="vRemark" placeholder="请输入备注" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建者</label>
+        <div class="layui-input-block">
+            <input type="text" id="vCreateName" autocomplete="off" readonly="readonly" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建时间</label>
+        <div class="layui-input-block">
+            <input type="text" id="dCreateDate" name="vCreateDate" autocomplete="off" readonly="readonly"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="fromAdd" type="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+
+    var form = layui.form
+        , laydate = layui.laydate;
+    ;
+    var userInfo = getUserInfo();
+    var vAreaCode = '',
+        vProCode = '';
+    laydate.render({
+        elem: '#dOpening'
+    });
+    laydate.render({
+        elem: '#dSHCAuth'
+    });
+
+    $(function () {
+        initPageData();
+        initPageEvent();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData() {
+        //加载品牌数据
+        initBrandSelect();
+        //加载4S店类型数据
+        initBranchType();
+        //加载经销商网络类型数据
+        initBranchNetType();
+        //加载经销商状态数据
+        initBranchStatus();
+        //加载发展级形式数据
+        initDevelopmentLevel();
+
+        $("#vCreateName").val(userInfo.vrealName);
+        $("#dCreateDate").val(getDateFormatYYYY_MM_DD(new Date()));
+
+        form.val('from_add', {
+            "vSHCFlag": false,
+            "vA3ETron": false,
+            "vA6ETron": false,
+            "vQ7ETron": false
+           // "vSportETron": false
+        })
+    }
+
+    /**
+     * 初始化事件
+     */
+    function initPageEvent() {
+
+        //监听停用标识
+
+        form.on('switch(v_SHC_Flag)', function (data) {
+            var SHC_auth;
+            if (data.elem.checked) {
+                SHC_auth = 1;
+                $("#vSHCFlag").val(SHC_auth);
+                $("#dSHCAuth").val(getDateFormatYYYY_MM_DD(new Date()));
+            } else {
+                SHC_auth = 0;
+                $("#vSHCFlag").val(SHC_auth);
+                $("#dSHCAuth").val('');
+            }
+        });
+
+        form.on('switch(a3AuthFlag)', function (data) {
+            var A3_auth;
+            if (data.elem.checked) {
+                A3_auth = 1;
+                $("#vA3ETron").val(A3_auth);
+            } else {
+                A3_auth = 0;
+                $("#vA3ETron").val(A3_auth);
+            }
+        });
+
+        form.on('switch(a6AuthFlag)', function (data) {
+            var A6_auth;
+            if (data.elem.checked) {
+                A6_auth = 1;
+                $("#vA6ETron").val(A6_auth);
+            } else {
+                A6_auth = 0;
+                $("#vA6ETron").val(A6_auth);
+            }
+        });
+
+        form.on('switch(q7AuthFlag)', function (data) {
+            var Q7_auth;
+            if (data.elem.checked) {
+                Q7_auth = 1;
+                $("#vQ7ETron").val(Q7_auth);
+            } else {
+                A3_auth = 0;
+                $("#vQ7ETron").val(Q7_auth);
+            }
+        });
+
+        // form.on('switch(sportAuthFlag)', function (data) {
+        //     var sprot_auth;
+        //     if (data.elem.checked) {
+        //         sprot_auth = 1;
+        //         $("#vSportETron").val(sprot_auth);
+        //     } else {
+        //         sprot_auth = 0;
+        //         $("#vSportETron").val(sprot_auth);
+        //     }
+        // });
+        //form提交事件
+        form.on('submit(fromAdd)', function (data) {
+            var urlStr = "/app/dealer/save";
+            var jsonData = {
+                vBrand: data.field.select_brand,
+                vCode: data.field.vCode,
+                vFullName: data.field.vFullName,
+                vShortName: data.field.vShortName,
+                vInvestor: data.field.vInvestor,
+                dOpening: data.field.dOpening,
+                vCity: data.field.selectCity,
+                vBranchType: data.field.branchType,
+                vBranchNetType: data.field.branchNetType,
+                vBranchStatus: data.field.branchStatus,
+                vDevelopmentLevel: data.field.developmentLevel,
+                vAdress: data.field.vAdress,
+                nLongitude: data.field.nLongitude,
+                nLatitude: data.field.nLatitude,
+                vSalTel: data.field.vSalTel,
+                vSvcTel: data.field.vSvcTel,
+                nDisplayCount: data.field.nDisplayCount,
+                vSHCFlag: $("#vSHCFlag").val(),
+                dSHCAuth: data.field.dSHCAuth,
+                vA3ETron: $("#vA3ETron").val(),
+                vA6ETron: $("#vA6ETron").val(),
+                vQ7ETron: $("#vQ7ETron").val(),
+                vSportETron: data.field.vSportETron,
+                vProfixer: data.field.vProfixer,
+                vRemark: data.field.vRemark
+            };
+            callAjax(urlStr, jsonData, function (jsonData, status) {
+                if (jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                    dmsalert('新增经销商信息成功!', 'S', function () {
+                        window.parent.location.reload();//修改成功后刷新父界面
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                } else {
+                    dmsalert(jsonData.msg, "W");
+                }
+            });
+            return false;
+        });
+    }
+
+    /**
+     *
+     * 初始品牌下拉数据
+     */
+    function initBrandSelect() {
+        //设置页面的品牌来源列表
+        var urlStr = "/app/brand/getAllBrandList";
+        callAjax(urlStr, {}, function (jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                var select_brand_obj = $("select[name='select_brand']");
+                for (var i = 0; i < jsonData.data.length; i++) {
+                    var opt = "<option value='" + jsonData.data[i].id + "'>" + jsonData.data[i].vBrandDesc + "</option>";
+                    select_brand_obj.append(opt);
+                }
+                form.render('select');
+                initAreaSelect();
+            } else {
+                dmstoast('获取品牌来源列表失败！', "W");
+            }
+        });
+    }
+
+    /**
+     *
+     * 初始大区下拉数据
+     */
+    function initAreaSelect() {
+        //设置页面的大区来源列表
+        callAjax("/app/area/getallarealist", {}, function (jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                var select_area_obj = $("select[name='selectArea']");
+                for (var i = 0; i < jsonData.data.length; i++) {
+                    var opt = "<option value='" + jsonData.data[i].vcode + "'>" + jsonData.data[i].vname + "</option>";
+                    select_area_obj.append(opt);
+                    vAreaCode = jsonData.data[0].vcode;
+                }
+                provinceSelect(vAreaCode);
+                form.render('select');
+                form.on('select(selectArea)', function (data) {
+                    vAreaCode = data.value;
+                    provinceSelect(vAreaCode);
+                });
+            } else {
+                dmstoast('获取大区来源列表失败！', "W");
+            }
+        });
+    }
+
+    //根据所选区域加载省份数据
+    function provinceSelect(area_code) {
+        var html = '';
+        var select_province_obj = '';
+        $('#selectProvince').html('');
+        callAjax("/app/province/getProListByAreaCode", {vAreaCode: area_code}, function (jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                select_province_obj = $("select[name='selectProvince']");
+                for (var i = 0; i < jsonData.data.length; i++) {
+                    html = "<option value='" + jsonData.data[i].vProCode + "'>" + jsonData.data[i].vProName + "</option>";
+                    select_province_obj.append(html);
+                    vProCode = jsonData.data[0].vProCode;
+                }
+                citySelect(vProCode);
+                form.render('select');
+                form.on('select(selectProvince)', function (data) {
+                    vProCode = data.value;
+                    citySelect(vProCode);
+                });
+            } else {
+                dmstoast('根据大区获取省份数据失败！', "W");
+            }
+        });
+    }
+
+    //根据所选省份加载城市数据
+    function citySelect(province_code) {
+        var city_html = '';
+        var select_city_obj = '';
+        $('#selectCity').html('');
+        callAjax("/app/city/getCityListByProCode", {vProCode: province_code}, function (jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                select_city_obj = $("select[name='selectCity']");
+                for (var i = 0; i < jsonData.data.length; i++) {
+                    city_html = "<option value='" + jsonData.data[i].id + "'>" + jsonData.data[i].vCityName + "</option>";
+                    select_city_obj.append(city_html);
+                }
+                form.render('select');
+            } else {
+                dmstoast('根据所选省份加载城市数据失败！', "W");
+            }
+        });
+    }
+
+    /**
+     * 初始化4s店类型列表
+     */
+    function initBranchType() {
+        callAjax("/app/dict/getDictItemForList", {"vDictCode": "branch_type"}, function (data, status) {
+            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                var sel_branch_type = $("select[name='branchType']");
+                for (var i = 0; i < data.data.length; i++) {
+                    var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                    sel_branch_type.append(opt);
+                }
+                form.render('select');
+            } else {
+                dmsalert(data.msg, "W");
+            }
+        });
+    }
+
+    /**
+     * 初始化经销商网络类型列表
+     */
+    function initBranchNetType() {
+        callAjax("/app/dict/getDictItemForList", {"vDictCode": "branch_net_type"}, function (data, status) {
+            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                var selBranchNetType = $("select[name='branchNetType']");
+                for (var i = 0; i < data.data.length; i++) {
+                    var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                    selBranchNetType.append(opt);
+                }
+                form.render('select');
+            } else {
+                dmsalert(data.msg, "W");
+            }
+        });
+    }
+
+    /**
+     * 初始化经销商状态列表
+     */
+    function initBranchStatus() {
+        callAjax("/app/dict/getDictItemForList", {"vDictCode": "branch_status"}, function (data, status) {
+            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                var selBranchStatus = $("select[name='branchStatus']");
+                for (var i = 0; i < data.data.length; i++) {
+                    var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                    selBranchStatus.append(opt);
+                }
+                form.render('select');
+            } else {
+                dmsalert(data.msg, "W");
+            }
+        });
+    }
+
+    /**
+     * 初始化发展级形式列表
+     */
+    function initDevelopmentLevel() {
+        callAjax("/app/dict/getDictItemForList", {"vDictCode": "branch_development_level"}, function (data, status) {
+            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                var selDevelopmentLevel = $("select[name='developmentLevel']");
+                for (var i = 0; i < data.data.length; i++) {
+                    var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                    selDevelopmentLevel.append(opt);
+                }
+                form.render('select');
+            } else {
+                dmsalert(data.msg, "W");
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form method="post" class="layui-form" lay-filter="from_add">
+    <input type="hidden" name="id" th:value="${constructionDo.id}">
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>经销商简称</span></label>
+        <div class="layui-input-block">
+            <input id="vShortName" type="text" name="vShortName" placeholder="请输入经销商简称" autocomplete="off"
+                   class="layui-input" lay-verify="required" th:value="${constructionDo.vShortName}">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>经销商全称</span></label>
+        <div class="layui-input-block">
+            <input id="vFullName" type="text" name="vFullName" placeholder="请输入经销商全称" autocomplete="off"
+                   class="layui-input" lay-verify="required" th:value="${constructionDo.vFullName}">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field ">
+        <label class="layui-form-label"><span>城市</span></label>
+        <div class="layui-input-inline">
+            <select name="selectArea" lay-verify="required" id="selectArea"  lay-filter="selectArea">
+                <option value="">请选择大区</option>
+            </select>
+        </div>
+        <div class="layui-input-inline">
+
+            <select name="selectProvince" lay-verify="required" id="selectProvince"  lay-filter="selectProvince">
+                <option value="">请选择省份</option>
+            </select>
+        </div>
+        <div class="layui-input-inline">
+
+            <select name="nCity" lay-verify="required" id="selectCity" lay-filter="selectCity">
+                <option value="">请选择城市</option>
+            </select>
+
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>地址</span></label>
+        <div class="layui-input-block">
+            <input id="vAddress" type="text" name="vAddress" placeholder="请输入地址" autocomplete="off"
+                   class="layui-input" lay-verify="required" th:value="${constructionDo.vAddress}">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>Loi</span></label>
+        <div class="layui-input-block">
+            <input id="dLoi" type="text" name="dLoi" placeholder="请选择Loi" autocomplete="off"
+                   class="layui-input" lay-verify="required" th:value="${constructionDo.dLoi}">
+        </div>
+    </div>
+    <div class="layui-form-item  layui-must-field">
+        <label class="layui-form-label"><span>完成时间</span></label>
+        <div class="layui-input-block">
+            <input id="dDone" type="text" name="dDone" placeholder="请选择完成时间" autocomplete="off"
+                   class="layui-input" lay-verify="required" th:value="${constructionDo.dDone}">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>状态</span></label>
+        <div class="layui-input-block">
+
+            <select name="vStatus" lay-verify="required" id="vStatus">
+                <option value="">请选择状态</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="fromAdd" type="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script>
+    var form = layui.form;
+    var laydate = layui.laydate;
+    //日期选择
+    laydate.render({
+        elem: '#dLoi'
+    });
+    laydate.render({
+        elem: '#dDone'
+    });
+    //表单初始赋值
+    form.val('from_add', {})
+
+    $(function () {
+        init();
+    })
+
+    function init() {
+        var constructionDo = [[${constructionDo.vStatus}]];
+        getstatus();
+    }
+
+    /**
+     * 获取数据字典 状态信息
+     */
+    function getstatus() {
+        // getDictItemForList
+        var ajax_url = '/app/dict/getDictItemForList';
+        var jsonDataObj = {vDictCode: "construction_status"};
+        callAjax(ajax_url, jsonDataObj, function deleteDictCB(jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                var str = "";
+                for (var i = 0; i < jsonData.data.length; i++) {
+                    var data = jsonData.data[i];
+                    if([[${constructionDo.vStatus}]]==jsonData.data[i].vCode){
+                        str += '  <option  selected="selected" value="' + data.vCode + '">' + data.vDesc + '</option>'
+                        continue;
+                    }
+                    str += '  <option value="' + data.vCode + '">' + data.vDesc + '</option>'
+                }
+                $("#vStatus").append(str);
+                form.render('select'); //刷新select选择框渲染
+                initAreaSelect();
+            } else {
+                dmsalert(jsonData.msg, "E");
+            }
+        });
+    }
+
+    /**
+     *
+     * 初始大区下拉数据
+     */
+    function initAreaSelect() {
+        //设置页面的大区来源列表
+        callAjax("/app/area/getallarealist", {}, function (jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                var select_area_obj = $("select[name='selectArea']");
+                for (var i = 0; i < jsonData.data.length; i++) {
+                    if([[${constructionDo.vAreaCode}]]==jsonData.data[i].vcode){
+                        var opt = "<option selected='selected' value='" + jsonData.data[i].vcode + "'>" + jsonData.data[i].vname + "</option>";
+                        select_area_obj.append(opt);
+                        continue;
+                    }
+                    var opt = "<option aa='aa' value='" + jsonData.data[i].vcode + "'>" + jsonData.data[i].vname + "</option>";
+                    select_area_obj.append(opt);
+                    vAreaCode = jsonData.data[0].vcode;
+                }
+                form.render('select');
+                provinceSelect( [[${constructionDo.vAreaCode}]]);
+                form.on('select(selectArea)', function (data) {debugger;
+                    console.log(data)
+                    vAreaCode = data.value;
+                    provinceSelect(vAreaCode);
+                });
+            } else {
+                dmstoast('获取大区来源列表失败！', "W");
+            }
+        });
+    }
+
+    //根据所选区域加载省份数据
+    function provinceSelect(area_code) {
+        var html = '';
+        var select_province_obj = '';
+        $('#selectProvince').html('');
+        callAjax("/app/province/getProListByAreaCode", {vAreaCode: area_code}, function (jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                select_province_obj = $("select[name='selectProvince']");
+                for (var i = 0; i < jsonData.data.length; i++) {
+                    if([[${constructionDo.vProCode}]]==jsonData.data[i].vProCode){
+                        html = "<option  selected='selected'  value='" + jsonData.data[i].vProCode + "'>" + jsonData.data[i].vProName + "</option>";
+                        select_province_obj.append(html);
+                        continue;
+                    }
+                    html = "<option value='" + jsonData.data[i].vProCode + "'>" + jsonData.data[i].vProName + "</option>";
+                    select_province_obj.append(html);
+                    vProCode = jsonData.data[0].vProCode;
+                }
+                form.render('select');
+                citySelect( [[${constructionDo.vProCode}]]);
+                form.on('select(selectProvince)', function (data) {
+                    vProCode = data.value;
+                    citySelect(vProCode);
+                });
+            } else {
+                dmstoast('根据大区获取省份数据失败！', "W");
+            }
+        });
+    }
+
+    //根据所选省份加载城市数据
+    function citySelect(province_code) {
+        var city_html = '';
+        var select_city_obj = '';
+        $('#selectCity').html('');
+        callAjax("/app/city/getCityListByProCode", {vProCode: province_code}, function (jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                select_city_obj = $("select[name='nCity']");
+                for (var i = 0; i < jsonData.data.length; i++) {
+                    if([[${constructionDo.nCity}]]==jsonData.data[i].id){
+                        city_html = "<option  selected='selected' value='" + jsonData.data[i].id + "'>" + jsonData.data[i].vCityName + "</option>";
+                        select_city_obj.append(city_html);
+                        continue;
+                    }
+                    city_html = "<option value='" + jsonData.data[i].id + "'>" + jsonData.data[i].vCityName + "</option>";
+                    select_city_obj.append(city_html);
+                }
+                form.render('select');
+            } else {
+                dmstoast('根据所选省份加载城市数据失败！', "W");
+            }
+        });
+    }
+        //监听提交
+        form.on('submit(fromAdd)', function (data) {
+            var urlStr = "/app/construction/update";
+            var jsonData = data.field;
+            callAjax(urlStr, jsonData, function (data) {
+                if (data.code == 'S') {
+                    dmsalert('修改在建经销商成功!', 'S', function () {
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭
+                        window.parent.location.reload();
+                    });
+                } else {
+                    dmstoast('修改在建经销商失败', "W");
+                }
+            });
+            return false;
+        });
+</script>
+</body>
+</html>

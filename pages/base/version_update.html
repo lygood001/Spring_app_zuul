@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version update page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head>
+
+<body>
+<form class="layui-form"  lay-filter="fromUpdate" id="data_form"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <input id="id" name="id" type="hidden" v-model:value="group_data.id">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">手机类型</label>
+        <div class="layui-input-block">
+            <input type="text" name="vOsType" placeholder="请输入" required lay-verify="required"
+                   autocomplete="off" class="layui-input" 
+                   readonly="readonly"  v-model:value="group_data.vosType">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>版本号</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vVersion" placeholder="请输入" required lay-verify="required"
+                   autocomplete="off" class="layui-input" v-model:value="group_data.vversion">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>App名称</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vAppName" placeholder="请输入" required lay-verify="required"
+                   autocomplete="off" class="layui-input"  v-model:value="group_data.vappName">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>下载路径</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vApkUrl" placeholder="请输入" required lay-verify="required"
+                   autocomplete="off" class="layui-input"  v-model:value="group_data.vapkUrl">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建时间</label>
+        <div class="layui-input-block">
+            <input type="text"  id="txt_dCreate" name="vCreate" autocomplete="off" readonly="readonly" class="layui-input" v-model:value="group_data.dcreate">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">检查版本标识</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="inStore" lay-skin="switch" id="vInStore"  v-bind:value="group_data.vinStore"  :checked="group_data.vinStore == 'Y'?'true':'false'" lay-text="是|否" lay-filter="stop" >
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="sub_btn">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+    <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<script> 
+    var form = layui.form;
+    form.val("formUpdate",{});
+    var vm = new Vue({
+     	el:"#data_form",
+     	data:
+     	{
+			group_data: {},
+     	}
+     }); 
+                 
+    $(function () {
+    	initPageData();
+    });
+
+	/**
+	 * 初始化页面数据
+	 */
+    function initPageData()
+    {
+    	var url="/SPRING-CLOUD-BASE/version/getVersionByID"; 
+        callAjax(url,{id:getURLParameter("id")||0},function (jsonData,status) {
+            if (jsonData.code =="S" && status == dms_boot_config.CALL_URL_OK) {
+            	 
+                 vm.group_data = jsonData.data;  
+				 form.render('checkbox');
+        
+        		 initPageEvent();
+             
+            }else{
+                dmsalert(jsonData.msg, "E");
+            }
+        });
+    }
+    
+    /**
+     * 初始化页面事件
+     */
+    function initPageEvent()
+    {
+        form.on('switch(stop)', function (data) {
+            var stop;
+            if (data.elem.checkd) {
+                stop = 0;
+                inStore = 0;
+            } else {
+                stop = 1;
+                inStore = 1;
+            }
+            $("#vInStore").val(stop);
+        });
+        updateVersion();
+    }
+
+    /**
+     * 更新版本信息
+     */
+    function updateVersion()
+    {
+        //监听提交
+        form.on('submit(sub_btn)', function(data){
+            var post_data ={};
+            post_data.id = data.field.id;
+            post_data.vOsType =data.field.vOsType;
+            post_data.vVersion =data.field.vVersion;
+            post_data.vAppName =data.field.vAppName;
+            post_data.vApkUrl =data.field.vApkUrl;
+            post_data.nCreator = getUserInfo().id;
+            if ($("input[name='inStore']").is(":checked")){
+                data.field.vInStore = "Y";
+            } else {
+                data.field.vInStore = "N";
+            }
+
+            var url="/SPRING-CLOUD-BASE/version/update";
+            // console.log()
+            callAjax(url,data.field,function (jsonData,status) {
+                if (jsonData.code =="S" && status == dms_boot_config.CALL_URL_OK) {
+                    dmsalert('更新版本信息成功!','S',function(){
+                        window.parent.location.reload();//修改成功后刷新父界面
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                }else{
+                    dmsalert(jsonData.msg, "E");
+                }
+            });
+            return false;
+        });
+    }
+
+</script>
+</body>
+</html>

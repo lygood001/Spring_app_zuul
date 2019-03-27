@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form"  lay-filter="fromUpdate" id="data_form"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <input id="id" name="id" type="hidden"  v-model:value="group_data.id">
+    <input id="nCreator" name="nCreator" type="hidden" v-model:value="group_data.nCreator">
+
+
+    <!--<div class="layui-form-item">-->
+        <!--<label class="layui-form-label">省份代码</label>-->
+        <!--<div class="layui-input-block">-->
+            <!--<input type="text" name="vProCode" placeholder="请输入" required lay-verify="required"-->
+                   <!--autocomplete="off" class="layui-input" readonly="readonly" th:value="${city.vProCode}">-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <div class="layui-form-item">
+        <div class="layui-form-item">
+            <label class="layui-form-label">省份名称</label>
+            <div class="layui-input-block">
+                <select name="vProCode" lay-filter="vProCode" >
+                </select>
+            </div>
+        </div>
+        <input id="txt_procode" type="hidden"  v-model:value="group_data.vProCode"/>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-form-item layui-must-field">
+            <label class="layui-form-label"><span>城市编码</span></label>
+                 <div class="layui-input-block">
+                     <input type="text" name="vCityCode" placeholder="请输入" required lay-verify="required"
+                   autocomplete="off" class="layui-input" readonly="readonly"  v-model:value="group_data.vCityCode">
+                 </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-form-item layui-must-field">
+                <label class="layui-form-label"><span>城市名称</span></label>
+                      <div class="layui-input-block">
+                          <input type="text" name="vCityName" placeholder="请输入" required lay-verify="required"
+                                autocomplete="off" class="layui-input"  v-model:value="group_data.vCityName">
+                     </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">城市首字母</label>
+            <div class="layui-input-block">
+                <input type="text" name="vCityFixer" placeholder="请输入" required lay-verify="required"
+                       autocomplete="off" class="layui-input" v-model:value="group_data.vCityFixer">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">创建者</label>
+            <div class="layui-input-block">
+                <input type="text" id="vCreatorName" name="vCreatorName" autocomplete="off" readonly="readonly" class="layui-input" v-model:value="group_data.vCreatorName">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">创建时间</label>
+            <div class="layui-input-block">
+                <input type="text"  id="txt_dCreateDate" name="vCreateDate" autocomplete="off" readonly="readonly" class="layui-input" v-model:value="group_data.dCreate">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="sub_btn">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+        <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<script>
+
+    var form = layui.form;
+    var vm = new Vue({
+     	el:"#data_form",
+     	data:
+     	{
+			group_data: {},
+     	}
+     }); 
+     
+    $(function () {
+        initPageData();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData()
+    {
+    	var url="/SPRING-CLOUD-SYS/city/getCityDetail"; 
+        callAjax(url,{id:getURLParameter("cityId")||0},function (jsonData,status) {
+            if (jsonData.code =="S" && status == dms_boot_config.CALL_URL_OK) {
+            	 
+                 vm.group_data = jsonData.data;
+        		 initProvinceSelect();
+        		 updateProvince();
+             
+            }else{
+                dmsalert(jsonData.msg, "E");
+            }
+        });
+       
+    }
+
+
+    /**
+     *
+     * 初始省份下拉数据
+     */
+    function initProvinceSelect()
+    {
+        //设置页面的省份来源列表
+        callAjax("/SPRING-CLOUD-SYS/province/getallprovincelist",{},function (data) {
+            if (data.code == "S") {
+                var select_por_obj = $("select[name='vProCode']");
+                for (var i = 0; i < data.data.length; i++) {
+                    var opt = "<option value='" + data.data[i].vProCode + "'>" + data.data[i].vProName + "</option>";
+                    select_por_obj.append(opt);
+                }
+                console.log("---->"+$("#txt_procode").val());
+                select_por_obj.val($("#txt_procode").val());
+                form.render('select');
+            } else {
+                dmstoast('获取城市来源列表失败！',"W");
+            }
+        });
+    }
+
+    /**
+     * 更新城市信息
+     */
+    function updateProvince()
+    {
+        //监听提交
+        form.on('submit(sub_btn)', function(data){
+
+            var url="/SPRING-CLOUD-SYS/city/update";
+            callAjax(url,data.field,function (jsonData,status) {
+                if (jsonData.code =="S") {
+                    dmsalert('更改城市信息成功!','S',function(){
+                        window.parent.location.reload();//修改成功后刷新父界面
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                }else{
+                    dmsalert(jsonData.msg, "W");
+                }
+            });
+            return false;
+        });
+    }
+
+</script>
+</body>
+</html>

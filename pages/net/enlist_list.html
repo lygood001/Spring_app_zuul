@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+</head>
+<body>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-normal" onclick="onAdd()">添加招募信息</button>
+    </div>
+
+</script>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+</script>
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script th:inline="none">
+        var table = layui.table, form = layui.form;
+
+        var columns_show_json=[[
+            {type:'checkbox'}
+            ,{field:'id', width:100, title: 'id', hide: true}
+            ,{field:'vStatus', width:100, title: '招募状态', hide: true}
+            ,{field:'vEnlistType', width:100, title: '招募类型', hide: true}
+            ,{field:'vStatusDesc', width:100, title: '招募状态', sort: true}
+            ,{field:'vEnlistTypeDesc', width:100, title: '招募类型', sort: true}
+            ,{field:'vCityAddress', width:100, title: '招募城市'}
+            ,{field:'vEnlistRange', width:100, title: '招募范围'}
+            ,{field:'vEnlistCondition', width:100, title: '招募要求'}
+            ,{field: 'nEnlistCount', title: '招募数量', width: 100}
+            ,{field:'nSaleCount', width:100, title: '销售预测（年）'}
+            ,{field:'nSvcCount', width:100, title: '日进场台次'}
+            ,{field: 'nDisplayCount', width: 120, title: '展位数'}
+            ,{field:'nRepaireCount', width:100, title: '机修数量'}
+            ,{field:'nPaintCount', width:100, title: '钣喷数量'}
+            ,{field:'vFloorArea', width:100, title: '建筑面积'}
+            ,{field:'vConsInvestment', width:100, title: '建筑投资'}
+            ,{field:'vCaInvestment', width:100, title: '设备投资'}
+            ,{field:'vOptionAreaRedline', width:100, title: '备选土地-用地红线'}
+            ,{field:'vOptionBuildingRedline', width:100, title: '备选土地-建筑红线'}
+            ,{field:'vStreetAreaRedline', width:100, title: '临街长度-用地红线'}
+            ,{field:'vStreetBuildingRedline', width:100, title: '临街长度-建筑红线'}
+            ,{field:'vReformArea', width:100, title: '建筑物改造-参考建筑面积'}
+            ,{field:'vReformBeam', width:100, title: '展厅梁底净高参考值'}
+            ,{field:'vReformFloor', width:100, title: '车间板底净高参考值'}
+            ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+        ]]
+
+        var para_json_obj = {
+            layer_table_define_obj: table,
+            layer_table_column_obj: columns_show_json,
+            ajax_url: "/app/enlist/list",
+            ajax_json_data: {},
+            dom_table_id: "test",
+            dom_bar_id: "toolbarDemo",
+            callback: function (res, curr, count) {
+            }
+        };
+    $(function () {
+        initPageTableData(para_json_obj);
+        form.render();
+    });
+        //删除 修改
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            console.log(JSON.stringify(data));
+            if (obj.event === 'del') {
+                layer.confirm('再次确认是否删除！', function (index) {
+                    callAjax("/app/enlist/remove",{id: data.id},function (data) {
+                        if (data.code == "S") {
+                            obj.del();
+                            dmsalert('删除招募信息成功','S');
+                            layer.close(index);
+                        } else {
+                            dmsalert('删除招募信息失败','W');
+                        }
+                    })
+                });
+            } else if (obj.event === 'edit') {
+                WindowsShow('编辑招募信息','/enlist/update?id='+data.id);
+            }
+        });
+
+    function onAdd() {
+        WindowsShow('新增招募信息','/enlist/add');
+    }
+</script>
+
+</body>
+</html>

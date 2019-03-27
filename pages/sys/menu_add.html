@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+	<meta charset="utf-8">
+	<!--CSS-->
+	<link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+	<link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+	  
+	<script> 
+	    document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+	    document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+	    document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+	</script>
+</head>
+<body>
+<form class="layui-form" action="" lay-filter="menuAdd">
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>菜单类型</span></label>
+            <div class="layui-input-block">
+                <select name="vMenuType" lay-filter="menuType">
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>菜单分组</span></label>
+            <div class="layui-input-block">
+                <select name="vMenuGroup" lay-filter="menuGroup">
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单代码</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="vMenuCode" required lay-verify="required" placeholder="请输入菜单代码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单描述</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="vMenuDesc" required lay-verify="required" placeholder="请输入菜单描述" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单样式</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="vCssCode" required lay-verify="required" placeholder="请输入菜单样式代码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>菜单来源</span></label>
+            <div class="layui-input-block">
+                <select name="vFrom" lay-filter="menuFrom">
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单url</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="vMenuUrl"  required lay-verify="required" placeholder="请输入菜单url" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>菜单动作</span></label>
+        <div class="layui-input-inline">
+            <textarea class="layui-textarea" name="vInstruction" style="width: 380px;height: 150px;" required lay-verify="required" placeholder="请输入菜单动作" autocomplete="off" ></textarea>
+            <!--<input type="text" name="vInstruction" style="width: 500px;height: 150px;" required lay-verify="required" placeholder="请输入菜单动作" autocomplete="off" class="layui-input">-->
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>停用标识</span></label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="vStopFlag" lay-skin="switch" lay-text="未停用|已停用">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label" onclick="F_Open_dialog()"><span>选择图标</span></label>
+        <div class="layui-input-block">
+            <input type="file" id="btn_file" onchange="imgChange(this)"  required lay-verify="required" style="display:none">
+            <img id="imgShow" src="">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script>
+        var form = layui.form;
+        form.val("menuAdd", {});
+        var userInfo = getUserInfo();
+
+        $(function () {
+            initPageData();
+            initPageEvent();
+        });
+
+        /**
+         * 初始化列表数据
+         */
+        function initPageData()
+        {
+            initMenuType();
+            initMenuGroup();
+            initMenuFrom();
+
+            $("input[name='vStopFlag']").attr('checked',true);
+            form.render();
+        }
+        /**
+         * 初始化菜单类型列表
+         */
+        function initMenuType()
+        {
+            callAjax("/SPRING-CLOUD-SYS/dict/getDictItemForList",{"vDictCode" : "menu_type"},function (data,status) {
+                if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                    var selMenuType = $("select[name='vMenuType']");
+                    for (var i = 0; i < data.data.length; i++) {
+                        if (data.data[i].vCode == 'APP'){
+                            var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                            selMenuType.append(opt);
+                        }
+                    }
+                    form.render('select');
+                }else{
+                    dmsalert(data.msg, "W");
+                }
+            });
+        }
+        /**
+         * 初始化菜单分组列表
+         */
+        function initMenuGroup()
+        {
+            callAjax("/SPRING-CLOUD-SYS/dict/getDictItemForList",{"vDictCode" : "menu_group"},function (data,status) {
+                if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                    var selMenuGroup = $("select[name='vMenuGroup']");
+                    for (var i = 0;i < data.data.length;i++){
+                        var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                        selMenuGroup.append(opt);
+                    }
+                    form.render('select');
+                }else{
+                    dmsalert(data.msg, "W");
+                }
+            });
+        }
+        /**
+         * 初始化菜单来源列表
+         */
+        function initMenuFrom()
+        {
+            callAjax("/SPRING-CLOUD-SYS/dict/getDictItemForList",{"vDictCode" : "integration_mode"},function (data,status) {
+                if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                    var selMenuFrom = $("select[name='vFrom']");
+                    for (var i = 0;i < data.data.length;i++){
+                        var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                        selMenuFrom.append(opt);
+                    }
+                    form.render('select');
+                }else{
+                    dmsalert(data.msg, "W");
+                }
+            });
+        }
+
+        /**
+         * 初始化页面事件
+         */
+        function initPageEvent()
+        {
+            //监听提交
+            form.on('submit(formDemo)', function(data){
+                data.field.base64str = "";
+                console.log(JSON.stringify(data.field));
+                //获取图片url转成base64
+                var reader = new FileReader();
+                var imgUrlBase64;
+                //取图片对象
+                var file = $("#btn_file")[0].files[0];
+                if (file) {
+                    //将文件以Data URL形式读入页面
+                    imgUrlBase64 = reader.readAsDataURL(file);
+                    reader.onload = function (e) {
+                        //var ImgFileSize = reader.result.substring(reader.result.indexOf(",") + 1).length;//截取base64码部分（可选可不选，需要与后台沟通）
+                        //执行上传操作
+                        if (data.field.vStopFlag == "on") {
+                            data.field.vStopFlag = "0";
+                        } else {
+                            data.field.vStopFlag = "1";
+                        }
+                        data.field.base64str = reader.result;
+                        console.log(JSON.stringify(data.field));
+                        callAjax("/SPRING-CLOUD-SYS/menu/save",data.field,function (data,status) {
+                            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                                dmsalert(data.msg,"S",function(){
+                                    window.parent.location.reload();
+                                    var index = parent.layer.getFrameIndex(window.name);
+                                    parent.layer.close(index);
+                                })
+                            } else {
+                                dmsalert(data.msg,"W");
+                            }
+                        })
+                    }
+                } else {
+                    dmsalert( '添加图片失败！');
+                }
+                return false;
+            });
+        }
+
+    /**
+     * 打开图片选择窗口
+     * @constructor
+     */
+    function F_Open_dialog()
+    {
+        $("#btn_file").click();
+    }
+
+    /**
+     * 图片改变事件
+     * @param e
+     */
+    function imgChange(e) {
+        //取图片对象
+        var file = $("#btn_file")[0].files[0];
+        //取图片位置
+        var path = window.URL.createObjectURL(file);
+        var shows = $("#imgShow")[0];
+        shows.style.display = 'block';
+        shows.style.width = '50px';
+        shows.style.height = '50px';
+        shows.src = path;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<form class="layui-form" lay-filter="menuAdd">
+    <input type="hidden" id="dataId" value="">
+</form>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" onclick="submit()" lay-event="getCheckData">确认</button>
+    </div>
+</script>
+
+<script type="text/html" id="switchTpl">
+    <!-- 这里的 checked 的状态只是演示 -->
+    <input type="checkbox" name="useFlag" disabled="disabled" value="{{d.vStopFlag}}" lay-skin="switch" lay-text="未停用|已停用" lay-filter="stop" {{d.vStopFlag == '0' ? 'checked' : '' }}>
+</script>
+
+<script type="text/html" id="imgTpl">
+    <!-- 图片选择控件 -->
+    <div>
+        <input type="file" id="btn_file" style="display:none">
+        <img id="imgShow" src="{{d.vFileUrl}}" style="width: 36px;height: 36px">
+    </div>
+</script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script th:inline="none">
+    var table = layui.table, form = layui.form;
+    form.val("menuAdd", {});
+    var columns_show_json=[[
+        {type:'checkbox'}
+        ,{field:'LAY_CHECKED', width:100, title: 'LAY_CHECKED', hide: true}
+        ,{field:'id', width:100, title: 'id', hide: true}
+        ,{field:'vMenuType', width:100, title: '菜单类型', hide: true}
+        ,{field:'vMenuGroupDesc', width:100, title: '菜单分组', sort: true}
+        ,{field:'vMenuGroup', width:100, title: '菜单分组id', hide: true}
+        ,{field:'vMenuCode', width:150, title: '菜单代码', sort: true}
+        ,{field:'vMenuDesc', width:150, title: '菜单描述', sort: true}
+        ,{field: 'picture', title: '菜单图标', width: 100,templet:'#imgTpl',unresize: true}
+    ]]
+
+    $(function () {
+        initTableData();
+        // initPageEvent();
+    });
+    function initTableData(){
+        var para_json_obj = {
+            layer_table_define_obj: table,
+            layer_table_column_obj: columns_show_json,
+            ajax_url: "/app/menu/list",
+            ajax_json_data: {},
+            dom_table_id: "test",
+            dom_bar_id:"toolbarDemo",
+            callback: function (res, curr, count) {
+            }
+        };
+        initPageTableData(para_json_obj);
+    }
+    function initPageTableData(para_json_obj) {
+        var table = para_json_obj.layer_table_define_obj;
+
+        var tbJson = {
+            elem: '#' + para_json_obj.dom_table_id,
+            url: getAjaxRequestUrl(para_json_obj.ajax_url),
+            method: 'POST',
+            where: {'inParaJsonStr': JSON.stringify( para_json_obj.ajax_json_data)},
+            toolbar: '#' + para_json_obj.dom_bar_id,
+            response: {statusCode: 'S'},
+            cols: para_json_obj.layer_table_column_obj,
+            page: false,
+            limit:100,
+            height: 'full-0',
+            done: function(res, curr, count){
+                para_json_obj.callback(res, curr, count);
+            }
+        }
+
+        table.render(tbJson);
+    }
+    function submit() {
+        var checkStatus = table.checkStatus('test');
+        //checkbox选中的项目
+        var chkdata = checkStatus.data;
+        //角色id
+        var rId = $("#dataId").val();
+
+        var idArray = new Array();
+
+        for (var i = 0; i < chkdata.length; i++) {
+            idArray.push({menuId:chkdata[i].id , roleId :rId, roleMenuType:"APP"});
+        }
+        var url = "/app/RoleMenu/save";
+        var data={
+            roleMenuType : "APP",
+            roleId : rId,
+            menuIds : idArray
+        };
+        callAjax(url,data,function (jsonData,status) {
+            if(jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK){
+                dmsalert('保存成功','S',function(){
+                    window.parent.location.reload();
+                    var index = parent.layer.getFrameIndex( window.name);
+                    parent.layer.close(index);
+                });
+            }else{
+                dmsalert(jsonData.msg, "W");
+            }
+        });
+        return false;
+    }
+</script>
+</body>
+</html>

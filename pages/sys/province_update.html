@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>province update page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form"  lay-filter="fromUpdate" id="data_form"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <input id="id" name="id" type="hidden" v-model:value="group_data.id">
+
+    <div class="layui-form-item">
+        <div class="layui-form-item">
+            <label class="layui-form-label">大区</label>
+            <div class="layui-input-block">
+                <select name="select_area" lay-filter="select_area">
+                </select>
+            </div>
+        </div>
+        <input id="txt_area" type="hidden" v-model:value="group_data.vAreaCode"/>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">省份代码</label>
+        <div class="layui-input-block">
+            <input type="text" name="vCode" placeholder="请输入" required lay-verify="required"
+                   autocomplete="off" class="layui-input" readonly="readonly" v-model:value="group_data.vProCode">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">省份名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="vDesc" placeholder="请输入" required lay-verify="required"
+                   autocomplete="off" class="layui-input" v-model:value="group_data.vProName">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">省份前缀</label>
+        <div class="layui-input-block">
+            <input type="text" name="vFixer" placeholder="请输入" required lay-verify="required"
+                   autocomplete="off" class="layui-input" v-model:value="group_data.vProFixer">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建者</label>
+        <div class="layui-input-block">
+            <input type="text" id="txt_vCreateName" autocomplete="off" readonly="readonly" class="layui-input" v-model:value="group_data.vCreatorName">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建时间</label>
+        <div class="layui-input-block">
+            <input type="text"  id="txt_dCreateDate" name="vCreateDate" autocomplete="off" readonly="readonly" class="layui-input" v-model:value="group_data.dCreate">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="sub_btn">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+    <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<script>
+
+    var form = layui.form;
+    var vm = new Vue({
+     	el:"#data_form",
+     	data:
+     	{
+			group_data: {},
+     	}
+     }); 
+     
+    $(function () {
+        initPageData();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData()
+    {
+    	var url="/SPRING-CLOUD-SYS/province/getProvinceByCode"; 
+        callAjax(url,{proCode:getURLParameter("v_province_code")||0},function (jsonData,status) {
+            if (jsonData.code =="S" && status == dms_boot_config.CALL_URL_OK) {
+            	 
+                 vm.group_data = jsonData.data;
+        		initAreaSelect();
+        		 updateProvince();
+             
+            }else{
+                dmsalert(jsonData.msg, "E");
+            }
+        });
+    	
+        
+    }
+
+
+    /**
+     *
+     * 初始大区下拉数据
+     */
+    function initAreaSelect()
+    {
+        //设置页面的大区来源列表
+        callAjax("/SPRING-CLOUD-SYS/area/getallarealist",{},function (data) {
+            if (data.code == "S") {
+                var select_area_obj = $("select[name='select_area']");
+                for (var i = 0; i < data.data.length; i++) {
+                	if(data.data[i].vcode==vm.group_data.vAreaCode)
+                	{
+                		var opt = "<option  selected = 'selected' value='" + data.data[i].vcode + "'>" + data.data[i].vname + "</option>";
+                	}
+                	else{
+                		var opt = "<option value='" + data.data[i].vcode + "'>" + data.data[i].vname + "</option>";
+
+                	}
+                    select_area_obj.append(opt);
+                }
+                console.log("---->"+$("#txt_area").val());
+                select_area_obj.val($("#txt_area").val());
+                form.render('select');
+            } else {
+                dmstoast('获取大区来源列表失败！',"W");
+            }
+        });
+    }
+
+    /**
+     * 更新省份信息
+     */
+    function updateProvince()
+    {
+        //监听提交
+        form.on('submit(sub_btn)', function(data){
+            var post_data ={};
+            post_data.id = data.field.id;
+            post_data.vAreaCode = data.field.select_area;
+            post_data.vProName = data.field.vDesc;
+            post_data.vProFixer = data.field.vFixer;
+
+            var url="/SPRING-CLOUD-SYS/province/update";
+            callAjax(url,post_data,function (jsonData,status) {
+                if (jsonData.code =="S") {
+                    dmsalert('更改省份信息成功!','S',function(){
+                        window.parent.location.reload();//修改成功后刷新父界面
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                }else{
+                    dmsalert(jsonData.msg, "W");
+                }
+            });
+            return false;
+        });
+    }
+
+</script>
+</body>
+</html>

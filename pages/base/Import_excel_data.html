@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<style>
+    body{
+        height: 100%;
+    }
+
+    .layui-form{
+        height: calc(100% - 30px);
+        overflow: auto;
+    }
+
+    .layui-table td{
+        text-align: center;
+        white-space: nowrap;
+    }
+</style>
+<body>
+
+<button class="layui-btn layui-btn-sm" onclick="ImportExcelItem()">确认导入</button>
+<div class="layui-form">
+    <table class="layui-table " lay-size="sm">
+        <!--<colgroup id="colCount">-->
+        <!--<col width="150">-->
+        <!--<col width="150">-->
+        <!--<col width="200">-->
+        <!--</colgroup>-->
+        <thead>
+        <tr id="titleColumn">
+        </tr>
+        </thead>
+        <tbody id="listData">
+        <tr>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script th:inline="javascript">
+    var table = layui.table,
+        form = layui.form;
+    var resultObj = [[${resultObj}]];
+    $(function () {
+        init();
+    })
+
+    var str = '';
+    var strTitle = '';
+    function init() {
+        var list = resultObj.data.list;
+        var Title = resultObj.data.Title;
+        dataInfo(list,Title);
+
+        $("#titleColumn").append(strTitle);
+        $("#listData").append(str);
+    }
+
+    function dataInfo(list,Title) {
+        for (var i = 0; i < list.length; i++) {
+            var col = list[i];
+            str += '<tr>';
+            for (var j = 0; j < Title[0].length; j++) {
+                if(col[j]==undefined){
+                    str += '<td></td>'
+                    continue;
+                }
+                if(col[Title[0].length-2]=='E'){
+                    str +=  '<td  style="color: #bb0a30;">' + col[j] + '</td>'
+                    continue;
+                }
+                str += '<td>' + col[j] + '</td>'
+            }
+            str += '</tr>';
+        }
+        for (var k = 0; k < Title.length; k++) {
+            var Tie = Title[k]
+            for (var j = 0; j < Title[0].length; j++) {
+                strTitle += '<td>' + Tie[j] + '</td>'
+            }
+        }
+    }
+    function ImportExcelItem() {
+        var ajax_url = '/excel/excelInfoImport';
+        var jsonDataObj = resultObj.data;
+        callAjax(ajax_url, jsonDataObj, function deleteDictCB(jsonData, status) {
+            if (jsonData.code == 'S' && status == dms_boot_config.CALL_URL_OK) {
+                dmsalert(jsonData.msg, "S", function () {
+
+                });
+            } else {
+                dmsalert(jsonData.msg, "E",function () {
+                    str="";
+                    strTitle="";
+                    var Tiele=jsonData.data.Title;
+                    Tiele[0][  Tiele[0].length]="状态"
+                    Tiele[0][  Tiele[0].length]="信息"
+                    dataInfo(jsonData.data.TempData,Tiele)
+                    document.getElementById("listData").innerHTML=str;
+                    document.getElementById("titleColumn").innerHTML=strTitle;
+                });
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>

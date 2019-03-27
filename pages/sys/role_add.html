@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form" lay-filter="fromAdd"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label layui-must-field"><span>角色代码</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vCode" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div> <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>角色描述</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="vDesc" placeholder="请输入" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">创建人</label>
+        <div class="layui-input-block">
+            <input type="text" id="nCreater"  placeholder="" disabled  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否停用</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="vStop" lay-skin="switch" id="vStop" value="1" lay-text="未停用|已停用" checked lay-filter="stop">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="sub_btn">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+    <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<script>
+    var vstop = "0";
+        var form = layui.form;
+        form.val("fromAdd", {})
+        form.on('switch(stop)', function(data){
+            var stop;
+            if (data.elem.checked) {
+                stop = 0;
+                vstop = 0 ;
+            } else {
+                stop = 1;
+                vstop = 1 ;
+            }
+            $("#vStop").val(stop);
+        });
+        $("#nCreater").val(getUserInfo().vrealName);
+
+        form.on('submit(sub_btn)', function(data){
+
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            data.field.nCreator = getUserInfo().id;
+            data.field.vrealName = getUserInfo().vrealName;
+
+            data.field.vStopFlag = vstop;
+            var url="/app/role/save";
+            callAjax(url,data.field,function (jsonData,status) {
+                if (jsonData.code =="S" && status == dms_boot_config.CALL_URL_OK) {
+                    dmsalert('保存成功!','S',function(){
+                        parent.layer.close(index);
+                        window.parent.location.reload();//修改成功后刷新父界面
+                    })
+                }else{
+                    dmsalert(jsonData.msg, "W");
+                }
+            })
+            return false;
+        });
+</script>
+</body>
+</html>

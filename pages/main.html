@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>main page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head>
+<link rel="stylesheet" href="../plus/webSocket/toastr/toastr.min.css">
+	<body>
+		<!-- 顶部开始 -->
+		<div class="container">
+			<div class="left_open">
+				<i title="展开左侧栏" class="iconfont">&#xe699;</i>
+			</div>
+			<div class="logo">
+				<a><img src="../plus/WeAdmin/images/logo.png" alt=""/></a>
+			</div>
+			<ul class="layui-nav right">
+				<li class="layui-nav-item">
+					<a>
+						<span  id="span_username"></span>
+						<img th:src="${vPORTRAITPATH}" class="layui-nav-img">
+					</a>
+					<dl class="layui-nav-child">
+						<dd><a  onclick="WindowsShow('个人信息','/user/editPage?id='+getUserInfo().id)">个人信息</a></dd>
+						<dd><a onclick="WindowsShow('更换头像','/user/picture','295','295')">更换头像</a></dd>
+					</dl>
+				</li>
+				<li class="layui-nav-item"><a  onclick="backLogin()" style="cursor:pointer;">退出</a></li>
+			</ul>
+
+		</div>
+		<!-- 顶部结束 -->
+		<!-- 中部开始 -->
+		<!-- 左侧菜单开始 -->
+		<div class="left-nav">
+			<div id="side-nav">
+				<ul id="nav">
+					<!--<li>-->
+						<!--<a href="javascript:;">-->
+							<!--<i class="iconfont">&#xe723;</i>-->
+							<!--<cite>系统管理</cite>-->
+							<!--<i class="iconfont nav_right">&#xe697;</i>-->
+						<!--</a>-->
+
+
+
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/version/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>维护版本信息</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/generation/genertion">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>代码生成</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/excel/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>EXCEL导入配置</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/druid/index.html">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>系统监控</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/errorLog/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>异常错误查询</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/role/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>角色管理</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/dict/dictPage">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>数据字典</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/menu/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>APP菜单管理</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+                        <!--<ul class="sub-menu">-->
+                            <!--<li>-->
+                                <!--<a _href="/menuPc/index">-->
+                                    <!--<i class="iconfont">&#xe6a7;</i>-->
+                                    <!--<cite>PC菜单管理</cite>-->
+                                <!--</a>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                        <!--<ul class="sub-menu">-->
+                            <!--<li>-->
+                                <!--<a _href="/user/index">-->
+                                    <!--<i class="iconfont">&#xe6a7;</i>-->
+                                    <!--<cite>用户管理</cite>-->
+                                <!--</a>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/attachmentConfigLevel1/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>文件上传配置</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/province/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>维护省份</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/city/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>维护城市</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/terminology/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>维护名词术语</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+
+
+					<!--</li>-->
+
+					<!--<li>-->
+						<!--<a href="javascript:;">-->
+							<!--<i class="iconfont">&#xe723;</i>-->
+							<!--<cite>营销网络管理</cite>-->
+							<!--<i class="iconfont nav_right">&#xe697;</i>-->
+						<!--</a>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/brand/brandPage">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>维护竞争品牌</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/dealer/dealerPage">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>维护4S经销商</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/dealerShc/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>维护二手车经销商</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/construction/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>在建经销商</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/role/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>建辅收藏管理</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+
+						<!--<ul class="sub-menu">-->
+							<!--<li>-->
+								<!--<a _href="/role/index">-->
+									<!--<i class="iconfont">&#xe6a7;</i>-->
+									<!--<cite>维护招募信息</cite>-->
+								<!--</a>-->
+							<!--</li>-->
+						<!--</ul>-->
+					<!--</li>-->
+
+				</ul>
+			</div>
+		</div>
+		<!-- <div class="x-slide_left"></div> -->
+		<!-- 左侧菜单结束 -->
+		<!-- 右侧主体开始 -->
+		<div class="page-content">
+			<div class="layui-tab tab" lay-filter="wenav_tab" id="WeTabTip" lay-allowclose="true">
+				<ul class="layui-tab-title" id="tabName">
+					<li>我的桌面</li>
+				</ul>
+				<div class="layui-tab-content">
+					<div class="layui-tab-item layui-show">
+						<iframe src='welcome.html' frameborder="0" scrolling="yes" class="weIframe"></iframe>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-content-bg"></div>
+		<!-- 右侧主体结束 -->
+		<!-- 中部结束 -->
+		<!-- 底部开始 -->
+		<!--<div class="footer">-->
+			<!--<div class="copyright">Copyright ©2018 WeAdmin v1.0 All Rights Reserved</div>-->
+		<!--</div>-->
+		<!-- 底部结束 -->
+		<!--父级菜单DEMO-->
+		<script type="text/html" id="firstDemo">
+			<li>
+				<a href="javascript:;">
+					<i class="iconfont">&#xe723;</i>
+					<cite>{{title}}</cite>
+					<i class="iconfont nav_right">&#xe697;</i>
+				</a>
+				{{childList}}
+			</li>
+		</script>
+		<!--子集菜单DEMO-->
+		<script type="text/html" id="childDemo">
+			<ul class="sub-menu">
+				<li>
+					<a _href="{{vMenuHref}}">
+						<i class="iconfont">&#xe6a7;</i>
+						<cite>{{vMnuDesc}}</cite>
+					</a>
+				</li>
+			</ul>
+		</script>
+
+		<script src="../plus/webSocket/sockjs.min.js"></script>
+		<script src="../plus/webSocket/stomp.min.js"></script>
+		<!-- Toastr script -->
+		<script src="../plus/webSocket/toastr/toastr.min.js"></script>
+		<script type="text/javascript">
+			var element=layui.element;
+			element.init();
+			var userInfo = getUserInfo();
+			$(function () {
+				initMenu();
+				connect();
+			});
+			function initMenu() {
+				
+				//接收登陆者信息
+				var url = location.search; //获取url中"?"符后的字串 ('?modFlag=business&role=1')  
+				var theRequest = new Object();
+				
+				//var userInfo=url.split('=');
+				document.getElementById("span_username").innerHTML=userInfo[1];
+				
+				var url = "/SPRING-CLOUD-SYS/menu/getPCMenuForUser";
+				var data={
+					userId : userInfo.id
+				};
+				callAjax(url,data,function (jsonData,status) {
+					if(jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK){
+						var allMenuData = transData(jsonData.data, 'value', 'pid', 'data');
+						console.log(allMenuData);
+						var temp = "";
+						$.each(allMenuData,function (key,value) {
+							var tempForFirst=$("#firstDemo").html();
+							var tempChildList = "";
+							if(value.data != null && value.data != undefined){
+								$.each(value.data,function (key2,value2) {
+									var tempForChild = $("#childDemo").html();
+									tempForChild = tempForChild.replace("{{vMenuHref}}",value2.vMenuUrl);
+									tempForChild = tempForChild.replace("{{vMnuDesc}}",value2.title);
+									tempChildList+=tempForChild;
+								});
+							}
+							tempForFirst = tempForFirst.replace("{{title}}",value.title);
+							tempForFirst = tempForFirst.replace("{{childList}}",tempChildList);
+							temp+=tempForFirst;
+						});
+						$("#nav").html(temp);
+						MenuClick()
+					}else{
+						dmsalert(jsonData.msg, "W");
+					}
+				});
+			}
+			function transData(a, idStr, pidStr, chindrenStr) {
+				var r = [], hash = {}, id = idStr, pid = pidStr, children = chindrenStr, i = 0, j = 0, len = a.length;
+				for (; i < len; i++) {
+					hash[a[i][id]] = a[i];
+				}
+				for (; j < len; j++) {
+					var aVal = a[j], hashVP = hash[aVal[pid]];
+					if (hashVP) {
+						!hashVP[children] && (hashVP[children] = []);
+						hashVP[children].push(aVal);
+					} else {
+						r.push(aVal);
+					}
+				}
+				return r;
+			}
+
+
+			//WebSocket 全部公告推送
+			function connect() {
+				var sock = new SockJS(dms_boot_config.WebSocket+"/endpointChat");
+				var stomp = Stomp.over(sock);
+				stomp.connect('guest', 'guest', function(frame) {
+
+					/**  订阅了/user/queue/notifications 发送的消息,这里雨在控制器的 convertAndSendToUser 定义的地址保持一致, 
+					 *  这里多用了一个/user,并且这个user 是必须的,使用user 才会发送消息到指定的用户。 
+					 *  */
+					stomp.subscribe("/user/queue/notifications", handleNotification);
+					stomp.subscribe('/topic/getResponse', function (response) { //订阅/topic/getResponse 目标发送的消息。这个是在控制器的@SendTo中定义的。
+						toastr.options = {
+							"closeButton": true,
+							"debug": false,
+							"progressBar": true,
+							"positionClass": "toast-bottom-right",
+							"onclick": null,
+							"showDuration": "400",
+							"hideDuration": "1000",
+							"timeOut": JSON.parse(response.body).timeOut,
+							"extendedTimeOut": "1000",
+							"showEasing": "swing",
+							"hideEasing": "linear",
+							"showMethod": "fadeIn",
+							"hideMethod": "fadeOut"
+						}
+						toastr.info(JSON.parse(response.body).responseMessage);
+					});
+				});
+				function handleNotification(response) {
+					toastr.options = {
+						"closeButton": true,
+						"debug": false,
+						"progressBar": true,
+						"positionClass": "toast-bottom-right",
+						"onclick": null,
+						"showDuration": "400",
+						"hideDuration": "1000",
+						"timeOut": JSON.parse(response.body).timeOut,
+						"extendedTimeOut": "1000",
+						"showEasing": "swing",
+						"hideEasing": "linear",
+						"showMethod": "fadeIn",
+						"hideMethod": "fadeOut"
+					}
+					toastr.info(JSON.parse(response.body).responseMessage);
+				}
+			}
+			function backLogin()
+			{
+				window.localStorage.setItem("VW.AUTO_USER_JSON","");
+				window.location.href="login.html";
+			}
+		</script>
+	</body>
+	<!--Tab菜单右键弹出菜单-->
+	<ul class="rightMenu" id="rightMenu">
+        <li data-type="fresh">刷新</li>
+        <li data-type="current">关闭当前</li>
+        <li data-type="other">关闭其它</li>
+        <li data-type="all">关闭所有</li>
+    </ul>
+
+</html>

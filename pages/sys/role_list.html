@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>role list page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+
+<body>
+
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-normal" onclick="onAdd()">添加角色</button>
+    </div>
+</script>
+<table class="layui-hide" id="role_table" lay-filter="test"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="menu">菜单</a>
+    <a class="layui-btn layui-btn-xs" lay-event="appMenu">APP菜单</a>
+</script>
+
+<script type="text/html" id="switchTpl">
+    <!-- 这里的 checked 的状态只是演示 -->
+    <input type="checkbox" name="sex" value="{{d.vStopFlag}}" lay-skin="switch" lay-text="未停用|已停用" lay-filter="stop" {{
+           d.vStopFlag== 0 ? 'checked' : '' }} disabled="true">
+</script>
+
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script th:inline="none">
+        var table = layui.table,
+            form = layui.form;
+
+        var columns_show_json =[[
+            {type:'radio'}
+            ,{field: 'id', width: 100, title: 'id', sort: true, hide: true}
+            ,{field:'vCode', width:100, title: '角色代码', sort: true}
+            ,{field:'vDesc', width:150, title: '角色描述', sort: true}
+            ,{field:'vStopFlag', width:100, title: '停用标识', templet: '#switchTpl'}
+            ,{field:'dStop', width:150, title: '停用时间', sort: true}
+            ,{field:'vCreatorName', width:100, title: '创建者'}
+            ,{field:'dCreate', width:150, title: '创建时间'}
+            ,{fixed: 'right', title: '操作', toolbar: '#barDemo', width: 230}
+        ]];
+
+        var para_json_obj  = {
+            layer_table_define_obj:table,
+            layer_table_column_obj:columns_show_json,
+            ajax_url:"/SPRING-CLOUD-SYS/role/list",
+            ajax_json_data:{},
+            dom_table_id:"role_table",
+            dom_bar_id:"toolbarDemo",
+            callback:function(res, curr, count){
+            }
+        };
+        initPageTableData(para_json_obj);
+        table.on('edit(test)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var com = field;
+            var json = {Id: data.id};
+            json[field] = value;
+
+        });
+
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('是否确认删除当前数据？', function (index) {
+                    callAjax('/SPRING-CLOUD-SYS/role/remove',{id: data.id}, function (data) {
+                        if (data.code == "S") {
+                            obj.del();
+                            dmstoast('删除当前角色信息成功！',"S");
+                        }else{
+                            dmstoast('删除当前角色信息失败！',"W");
+                        }
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                WindowsShow('编辑角色',"role_update.html?value=" + data.id,800,400);
+            }else if(obj.event === 'menu'){
+                onShowMenu(data.id);
+            }else if(obj.event === 'appMenu'){
+                onShowAppMenu(data.id);
+            }
+        });
+
+    function onAdd() {
+         WindowsShow('添加角色','role_add.html','800','400');
+    }
+    function onShowMenu(id) {
+        WeAdminEdit('角色菜单管理','menu_role.html',id,'300','400');
+    }
+    function onShowAppMenu(id) {
+        WeAdminEdit('APP菜单管理','appMenuRole.html',id,'600','500');
+    }
+</script>
+
+</body>
+</html>

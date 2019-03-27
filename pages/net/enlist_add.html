@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>version page</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+</head>
+
+<body>
+<form method="post" class="layui-form" id="addDealerItem" lay-filter="from_add">
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>招募状态</span></label>
+            <div class="layui-input-block">
+                <select name="vStatus"   id="vStatus" lay-filter="vStatus" lay-verify="required">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>招募类型</span></label>
+        <div class="layui-input-block">
+            <select name="vEnlistType"  id="vEnlistType" lay-filter="vEnlistType" lay-verify="required">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label" onclick="F_Open_dialog()"><span>展示图片</span></label>
+        <div class="layui-input-block">
+            <input type="file" id="btn_file" onchange="imgChange(this)"  required lay-verify="required" style="display:none">
+            <img id="imgShow" src="">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>招募地址</span></label>
+        <div class="layui-input-block">
+            <input id="vCityAddress" type="text" name="vCityAddress" placeholder="请输入招募地址" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>招募范围</span></label>
+        <div class="layui-input-block">
+            <input id="vEnlistRange" type="text" name="vEnlistRange" placeholder="请输入招募范围" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>招募要求</span></label>
+        <div class="layui-input-block">
+            <input id="vEnlistCondition" type="text" name="vEnlistCondition" placeholder="请输入招募要求" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>招募数量</span></label>
+        <div class="layui-input-block">
+            <input id="nEnlistCount" type="number" name="nEnlistCount" placeholder="请输入招募数量" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>销售预测（年）</span></label>
+            <div class="layui-input-block">
+                <input id="nSaleCount" type="number" name="nSaleCount" placeholder="请输入销售预测（年）数量" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>日进场台次</span></label>
+            <div class="layui-input-block">
+                <input id="nSvcCount" type="number" name="nSvcCount" placeholder="请输入日进场台次" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>展位数</span></label>
+            <div class="layui-input-block">
+                <input id="nDisplayCount" type="number" name="nDisplayCount" placeholder="请输入展位数" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>机修数量</span></label>
+            <div class="layui-input-block">
+                <input id="nRepaireCount" type="number" name="nRepaireCount" placeholder="请输入机修数量" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>钣喷数量</span></label>
+            <div class="layui-input-block">
+                <input id="nPaintCount" type="number" name="nPaintCount" placeholder="请输入钣喷数量" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>建筑面积</span></label>
+            <div class="layui-input-block">
+                <input id="vFloorArea" type="text" name="vFloorArea" placeholder="请输入建筑面积" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span>建筑投资</span></label>
+            <div class="layui-input-block">
+                <input id="vConsInvestment" type="text" name="vConsInvestment" placeholder="请输入建筑投资" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>设备投资</span></label>
+        <div class="layui-input-block">
+            <input id="vCaInvestment" type="text" name="vCaInvestment" placeholder="请输入设备投资" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>备选土地-用地红线</span></label>
+        <div class="layui-input-block">
+            <input id="vOptionAreaRedline" type="text" name="vOptionAreaRedline" placeholder="请输入备选土地-用地红线" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>备选土地-建筑红线</span></label>
+        <div class="layui-input-block">
+            <input id="vOptionBuildingRedline" type="text" name="vOptionBuildingRedline" placeholder="请输入备选土地-建筑红线" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>临街长度-用地红线</span></label>
+        <div class="layui-input-block">
+            <input id="vStreetAreaRedline" type="text" name="vStreetAreaRedline" placeholder="请输入临街长度-用地红线" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>临街长度-建筑红线</span></label>
+        <div class="layui-input-block">
+            <input id="vStreetBuildingRedline" type="text" name="vStreetBuildingRedline" placeholder="请输入临街长度-建筑红线" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>建筑物改造-参考建筑面积</span></label>
+        <div class="layui-input-block">
+            <input id="vReformArea" type="text" name="vReformArea" placeholder="请输入建筑物改造-参考建筑面积" autocomplete="off"
+                   class="layui-input"
+                   lay-verify="number">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>展厅梁底净高参考值</span></label>
+        <div class="layui-input-block">
+            <input id="vReformBeam" type="text" name="vReformBeam" placeholder="请输入展厅梁底净高参考值" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <label class="layui-form-label"><span>车间板底净高参考值</span></label>
+        <div class="layui-input-block">
+            <input id="vReformFloor" type="text" name="vReformFloor" placeholder="请输入车间板底净高参考值" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-must-field">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="fromAdd" type="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+
+    var form = layui.form;
+    form.val("menuAdd", {});
+    $(function () {
+        initPageData();
+        initPageEvent();
+    });
+
+    /**
+     * 初始化列表数据
+     */
+    function initPageData() {
+        initEnlistStatus();
+        initEnlistType();
+        form.render();
+    }
+    function initEnlistStatus()
+    {
+        callAjax("/app/dict/getDictItemForList",{"vDictCode" : "enlist_status"},function (data,status) {
+            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                console.log(data);
+                var selMenuType = $("select[name='vStatus']")
+                var selMenuType = $("#vStatus");
+                for (var i = 0; i < data.data.length; i++) {
+                        var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                        selMenuType.append(opt);
+                }
+                form.render('select');
+            }else{
+                dmsalert(data.msg, "W");
+            }
+        });
+    }
+    function initEnlistType()
+    {
+        callAjax("/app/dict/getDictItemForList",{"vDictCode" : "enlist_type"},function (data,status) {
+            if (data.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                var selMenuType = $("select[name='vEnlistType']");
+                var selMenuType = $("#vEnlistType");
+                console.log(data);
+                for (var i = 0; i < data.data.length; i++) {
+                        var opt = "<option value='" + data.data[i].vCode + "'>" + data.data[i].vDesc + "</option>";
+                        selMenuType.append(opt);
+                }
+                form.render('select');
+            }else{
+                dmsalert(data.msg, "W");
+            }
+        });
+    }
+    /**
+     * 初始化事件
+     */
+    function initPageEvent() {
+
+
+
+
+        //form提交事件
+        form.on('submit(fromAdd)', function (data) {
+            data.field.base64str = "";
+            console.log(JSON.stringify(data.field));
+            //获取图片url转成base64
+            var reader = new FileReader();
+            var imgUrlBase64;
+            //取图片对象
+            var file = $("#btn_file")[0].files[0];
+            var urlStr = "/app/enlist/save";
+            var jsonData = data.field;
+            if (file) {
+                imgUrlBase64 = reader.readAsDataURL(file);
+                reader.onload = function (e) {
+                    if (data.field.vStopFlag == "on") {
+                        data.field.vStopFlag = "0";
+                    } else {
+                        data.field.vStopFlag = "1";
+                    }
+                    data.field.base64str = reader.result;
+                }
+                console.log(JSON.stringify(jsonData))
+                callAjax(urlStr, jsonData, function (jsonData, status) {
+                    if (jsonData.code == "S" && status == dms_boot_config.CALL_URL_OK) {
+                        dmsalert('新增招募信息成功!', 'S', function () {
+                            window.parent.location.reload();//修改成功后刷新父界面
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        });
+                    } else {
+                        dmsalert(jsonData.msg, "W");
+                    }
+                });
+            }else{
+                dmsalert( '添加图片失败！');
+            }
+
+            return false;
+        });
+    }
+
+    function imgChange(e) {
+        //取图片对象
+        var file = $("#btn_file")[0].files[0];
+        //取图片位置
+        var path = window.URL.createObjectURL(file);
+        var shows = $("#imgShow")[0];
+        shows.style.display = 'block';
+        shows.style.width = '100px';
+        shows.style.height = '80px';
+        shows.src = path;
+    }
+    function F_Open_dialog()
+    {
+        $("#btn_file").click();
+    }
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>attchment config level 2</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--CSS-->
+    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+  
+    <script> 
+        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+    </script>
+
+</head> 
+<body>
+<form class="layui-form" action="" style="position: absolute; top: 15px; left: 150px; z-index: 999;">
+    <div class="layui-form-item proSelect">
+        <label class="layui-form-label">文件分类</label>
+        <div class="layui-input-block editWidth">
+            <select name="productList" lay-verify="required" id="select_leavel1" class="select_leavel1" lay-filter="business">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+</form>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" onclick="addLeavel2Item()">新增上传文件配置</button>
+    </div>
+</script>
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    </script>
+    <script  th:inline="none">
+        var table;
+        var form;
+        var json_table_format;
+
+        layui.use(['table','form'], function(){
+             table = layui.table;
+             form = layui.form;
+            json_table_format = [[
+                {field:'id', width:100, title: 'id', hide: true}
+                ,{field:'vClassType', width:100, title: '文件分类', sort: true}
+                ,{field:'vFileType', width:100, title: '文件类型', sort: true}
+                ,{field:'vFileTypeName', width:100, title: '类型名称', sort: true}
+                ,{field:'vClassFilePath', width:150, title: '文件磁盘路径', sort: true}
+                ,{field:'vFileSize', width:150, title: '文件大小(KB)', sort: true}
+                ,{field:'nPxLength', width:150, title: '分辨率，长'}
+                ,{field:'nPxWidth', width:150, title: '分辨率，宽'}
+                ,{field:'nLimit', width:100, title: '上传数量限制'}
+                ,{field:'vCreatorName', width:100, title: '创建者'}
+                ,{field:'dCreate', width:150, title: '创建时间'}
+                ,{field:'dUpdate', width:150, title: '修改时间'}
+                ,{fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+            ]];
+
+            //删除 修改
+            table.on('tool(test)', function (obj) {
+                var data = obj.data;
+                if (obj.event === 'del') {
+                    layer.confirm('您确定要删除该条数据？', function (index) {
+
+                        var canshu={
+                            "id":parseInt(data.id)
+                        };
+                        callAjax("/SPRING-CLOUD-BASE/attachmentConfigLevel2/remove",canshu,function (jsonData,Status) {
+                            if(jsonData.code=='S')
+                            {
+                                obj.del();
+                                dmstoast("删除成功","W");
+                                layer.close(index);
+                            }else{
+                                dmstoast("删除失败","W");
+                            }
+                        });
+                    });
+                }
+
+                else if (obj.event === 'edit') {
+                   WindowsShow('修改图片配置','attachmentConfigLevel2_edit.html?id=' + data.id,'400','400');
+                   
+				   MaxOpenWindows();
+                }
+            });
+            //选择下拉列表
+            form.on('select(business)', function(data){
+
+                    getListByType(data.value);
+            });
+
+        getList();
+        //获取
+        function getList(){
+            layui.use('table', function(){
+                table = layui.table;
+                var para_json_obj={
+                    "layer_table_define_obj":table,
+                    "layer_table_column_obj":json_table_format,
+                    "dom_table_id":"test",
+                    "ajax_url":"/SPRING-CLOUD-BASE/attachmentConfigLevel2/listByClassType",
+                    "ajax_json_data":{'vClassType':"all"},
+                    "dom_bar_id":"toolbarDemo",
+                    "callback":function (res, curr, count) {
+                        var canshu={
+                        };
+                        callAjax("/SPRING-CLOUD-BASE/attachmentConfigLevel1/getAttachmentConfigLevel1List",canshu,attachmentConfigLevel1listCB);
+                    }
+                };
+                initPageTableData(para_json_obj);
+
+            });
+        }
+
+        // setTimeout(function () {
+
+        // },500);
+        //获取
+        function attachmentConfigLevel1listCB(jsonData,Status)
+        {
+            if(jsonData.code=='S')
+            {
+                $('#select_leavel1').empty();
+                var str="";
+                str+='<option value="all">全部</option>';
+                for(var i=0;i<jsonData.data.length;i++)
+                {
+                    str+='<option value="'+jsonData.data[i].vClassType+'">'+jsonData.data[i].vClassName+'</option>';
+                }
+                $('.select_leavel1').append(str);
+
+                form.render('select');
+            }else{
+
+            }
+        }
+        });
+
+
+        //点击添加
+        function addLeavel2Item() {
+            WindowsShow('添加文件上传配置','attachmentConfigLevel2_add.html','500','500');
+            
+			MaxOpenWindows();
+        }
+
+
+        //通过分类获取列表
+        function getListByType(data) {
+            var canshu={
+                'vClassType':data
+            };
+            layui.use('table', function(){
+
+                var para_json_obj={
+                    "layer_table_define_obj":table,
+                    "layer_table_column_obj":json_table_format,
+                    "dom_table_id":"test",
+                    "ajax_url":"/SPRING-CLOUD-BASE/attachmentConfigLevel2/listByClassType",
+                    "ajax_json_data":canshu,
+                    "dom_bar_id":"toolbarDemo",
+                    "callback":function (res, curr, count) {
+
+                    }
+                };
+                initPageTableData(para_json_obj);
+            });
+        }
+
+
+    </script>
+</body>
+</html>

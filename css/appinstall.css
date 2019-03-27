@@ -1,0 +1,199 @@
+html, body {
+	width: 100%;
+	height: 100%;
+	font-family: "微软雅黑";
+	/*overflow: hidden;*/
+}
+
+.sui-content {
+	width: 100%;
+	height: 100%;
+	/*overflow: hidden;*/
+}
+
+/*phone style*/
+.sui-phone-content {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background-color: #5cb1e5;
+	background-image: url(../images/phone_bg.jpg);
+	background-repeat: no-repeat;
+	background-position: top center;
+	background-size: 100% auto;
+}
+
+.sui-phone-content .sui-title {
+	position: absolute;
+	top: 8%;
+	left: 0;
+	width: 100%;
+	text-align: center;
+}
+
+.sui-phone-content .sui-title h3 {
+	margin: 0;
+	font-size: 38px;
+	font-weight: 400;
+	text-shadow: 2px 2px 0 #4895cd;
+	color: #fff;
+}
+
+.sui-phone-content .sui-title h3 i {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0 7px 0 10px;
+	width: 10px;
+	height: 10px;
+	background: #e0d969;
+	font-style: normal;
+	border-radius: 50%;
+}
+
+.sui-phone-content .sui-title h3 small {
+	font-size: 22px;
+	text-shadow: none;
+}
+
+.sui-phone-content .sui-title img {
+	display: block;
+	margin: 10px auto 0;
+	width: 117px;
+}
+
+.sui-phone-content .sui-phone-code {
+	position: absolute;
+	top: 25%;
+	left: 50%;
+	width: 70%;
+	padding-bottom: 70%;
+	margin-left: -35%;
+	background-image: url(../images/phone_code.png);
+	background-size: 100% 100%;
+}
+
+.sui-phone-content .sui-phone-code .sui-code {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	padding: 2px;
+	margin: -23% 0 0 -23%;
+	width: 46%;
+	height: 46%;
+	background: #fff;
+	border-radius: 3px;
+}
+
+.sui-phone-content .sui-phone-code .sui-code img {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.sui-download-btn {
+	position: absolute;
+	bottom: 8%;
+	left: 50%;
+	margin-left: -100px;
+	width: 200px;
+	height: 36px;
+	text-align: center;
+	border: 1px solid #fff;
+	border-radius: 18px;
+	box-shadow: 2px 1px 0 #4895cd;
+}
+
+.sui-download-btn a {
+	display: block;
+	width: 100%;
+	height: 100%;
+	padding: 6px 0;
+	line-height: 23px;
+	font-size: 14px;
+	color: #fff;
+	text-shadow: 2px 1px 0 #4895cd;
+}
+
+.sui-download-btn .sui-icon {
+	display: inline-block;
+	vertical-align: top;
+	width: 20px;
+	margin-right: 5px;
+}
+
+
+/*wechat*/
+.sui-wechat-content {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	padding-top: 1px;
+	background-color: #5cb1e5;
+	background-image: url(../images/wechat_bg.jpg);
+	background-repeat: no-repeat;
+	background-position: bottom center;
+	background-size: 100% auto;
+}
+
+.sui-wechat-content img {
+	display: block;
+	max-width: 100%;
+}
+
+.sui-wechat-content img.sui-wechat-pic-01 {
+	margin: 5% auto 0;
+	width: 70%;
+}
+
+.sui-wechat-content img.sui-wechat-pic-02 {
+	margin: 0 auto;
+	width: 70%;
+}
+
+.sui-pc-content .sui-box01 {
+	height: 625px;
+	background: url(../images/pc_img_01.jpg) no-repeat center top;
+}
+
+.sui-pc-wrapper {
+	position: relative;
+	width: 990px;
+	height: 100%;
+	margin: 0 auto;
+}
+
+.sui-pc-code {
+	position: absolute;
+	top: 276px;
+	left: 384px;
+	width: 222px;
+}
+
+.sui-box01 h3 {
+	position: absolute;
+	top: 70px;
+	left: 0;
+	width: 100%;
+	margin: 0;
+	text-align: center;
+	font-size: 88px;
+	font-weight: 400;
+	text-shadow: 2px 2px 0 #4895cd;
+	color: #fff;
+}
+
+.sui-box01 h3 i {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0 25px 0 30px;
+	width: 15px;
+	height: 15px;
+	background: #e0d969;
+	font-style: normal;
+	border-radius: 50%;
+}
+
+.sui-box01 h3 small {
+	font-size: 52px;
+	text-shadow: none;
+}
