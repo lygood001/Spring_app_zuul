@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>sms_OutBox list page</title>
+	    <meta name="keywords" content="">
+	    <meta name="description" content="">
+	    <!--CSS-->
+	    <link rel="stylesheet" href="../../plus/layui/css/layui.css" media="all">
+	    <link rel="stylesheet" href="../../plus/WeAdmin/css/font.css">
+	    <link rel="stylesheet" href="../../plus/WeAdmin/css/weadmin.css">
+	  
+	    <script> 
+	        document.write("<script  src="+"../../plus/layui/jquery.min.js?"+Math.random()+"><"+"/"+"script>");
+	        document.write("<script  src="+"../../plus/layui/layui.all.js?"+Math.random()+"><"+"/"+"script>"); 
+	        document.write("<script  src="+"../../plus/mui/vue.min.js?"+Math.random()+"><"+"/"+"script>");
+	        document.write("<script  src="+"../../plus/WeAdmin/js/admin.js?"+Math.random()+"><"+"/"+"script>");
+	        document.write("<script  src="+"../../js/dms_bootweb_config.js?"+Math.random()+"><"+"/"+"script>");
+	        document.write("<script  src="+"../../js/dms_bootweb_common.js?"+Math.random()+"><"+"/"+"script>");
+	    </script>
+	</head>
+	<style>
+	    .brand-color-css{
+	        display: inline-block;
+	        width: 28px;
+	        height: 16px;
+	        vertical-align: middle;
+	        margin-left: 5px;
+	        border-radius: 3px;
+	    }
+	</style>	
+	<body>
+	<table class="layui-hide" id="sms_OutBox" lay-filter="sms_OutBox"></table>	
+	
+	<script type="text/html" id="toolbarDemo">
+	    <div class="layui-btn-container">
+	        <button class="layui-btn layui-btn-sm" lay-event="getCheckData" onclick="addBrandItem()">添加短信信息</button>
+	    </div>
+	</script>		
+	<script type="text/html" id="barDemo">
+	    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+	    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+	</script>
+		
+	<script  th:inline="none">
+    var table = layui.table,
+        form = layui.form;
+    var json=[[
+        {field: 'id', width: 200, title: 'id', sort: false,hide: true}
+        ,{field: 'V_USERNAME', width: 150, title: '用户名字', sort: false}
+        ,{field: 'V_MBNO', width:200, title: '电话号码', sort: false}
+//      ,{field: 'vCssColor', width:200, title: '竞争品牌css颜色', templet : function(value) {
+//              return '<span style="vertical-align: middle">' + value.vCssColor + '</span><span class="brand-color-css" style="background-color: ' + value.vCssColor +';"></span>';
+//          }
+//      ,sort: false}
+        ,{field: 'V_MSG', width:150, title: '短信内容', sort: false}
+        ,{field: 'D_SENDTIME', width:150, title: '发送时间', sort: false}
+        ,{field: 'N_COMPORT', width:100, title: '端口号', sort: false}
+        ,{field: 'N_REPORT', width:200, title: '报告编号', sort: false}
+        ,{field: 'V_CONNETTYPE', width:200, title: '连接方式', sort: false}
+        ,{field: 'V1', width:200, title: '连接方式', sort: false}
+        ,{field: 'V2', width:200, title: '连接方式', sort: false}
+        ,{field: 'V3', width:200, title: '连接方式', sort: false}
+        ,{field: 'V4', width:200, title: '连接方式', sort: false}
+        ,{field: 'V5', width:200, title: '连接方式', sort: false}
+        ,{field: 'N_CREATOR', width:200, title: '创建者', sort: false}
+        ,{field: 'D_CREATE', width:200, title: '创建时间', sort: false}
+        ,{field: 'D_UPDATE', width:200, title: '更新时间', sort: false}        
+        ,{fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+    ]];
+    var jsonTable={
+        layer_table_define_obj:table,
+        layer_table_column_obj:json,
+        ajax_url:"/SPRING-AUDI-NET/sms_outbox/GetSMS_OutBoxlist",
+        ajax_json_data:{},
+        dom_table_id:"brand",
+        dom_bar_id:"toolbarDemo",
+        callback:function (res, curr, count) {
+        }
+
+    }
+    initPageTableData(jsonTable);
+    table.on('tool(brand)', function (obj) {
+        var data = obj.data;
+        if (obj.event === 'del') {
+            layer.confirm('您确定要删除该条数据？', function (index) {
+                callAjax("/SPRING-AUDI-NET/brand/remove", {id:data.id}, function (jsonData,CALL_URL_OK) {
+                    if(CALL_URL_OK==1&&jsonData.code=="S"){
+                        dmsalert("删除成功","S");
+                        obj.del();
+                    }else{
+                        dmsalert("删除失败","E");
+                    }
+
+                }, 0)
+
+            });
+        }else if (obj.event === 'edit') {
+            WindowsShow('更改品牌数据','brand_edit.html?id='+data.id,'400','470');
+        }
+    });
+    function addBrandItem() {
+        WindowsShow('新增竞争品牌','brand_add.html','400','370');
+    }
+</script>
+	
+	
+	</body>
+</html>
